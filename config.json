@@ -1,12 +1,13 @@
 {
-  "name": "larger_params_energy_scaled_rfp",
-  "description": "Scaling up new hyperparameters. If this runs with no memory issues I will set to run for more gibbs steps.",
+  "name": "temporal_resampling_rfp",
+  "description": "Using temporal resampling for faster computation - 150 samples per step across 50 steps = 7500 total temporal coverage vs 500 fixed.",
 
-  "sample_size": 500,
+  "sample_size": 150,
   "ensemble_size": 50,
   "n_gibbs_steps": 50,
   "n_proposals_per_variable": 8,
   "proposal_scale": 0.05,
+  "temporal_resampling": true,
 
   "n_universe_samples": 350640,
 

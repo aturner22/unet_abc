@@ -370,10 +370,42 @@ def batched_forward_proposals(
     return best_proposal_output, joint_scores
 
 
+def resample_temporal_batches(
+    full_dataset,
+    sample_size: int,
+    device: torch.device,
+    num_variables: int,
+    max_horizon: int,
+    latitude,
+    longitude,
+    step_seed: int = None
+) -> list[tuple[torch.Tensor, torch.Tensor, torch.Tensor]]:
+    """Resample temporal batches for current Gibbs step."""
+    if step_seed is not None:
+        np.random.seed(step_seed)
+    
+    # Sample random temporal indices for this step
+    subset_indices = np.random.choice(len(full_dataset), size=sample_size, replace=False)
+    dataset = torch.utils.data.Subset(full_dataset, subset_indices)
+    loader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False)
+    
+    # Use the same processing as materialise_batches
+    batches = []
+    for previous_fields, current_fields, valid_time in loader:
+        previous_fields = previous_fields.to(device)
+        current_fields = current_fields.view(-1, num_variables, len(latitude), len(longitude)).to(device)
+        time_normalised = torch.tensor([valid_time[0]], dtype=torch.float32, device=device) / max_horizon
+        batches.append((previous_fields, current_fields, time_normalised))
+    
+    return batches
+
+
 def run_gibbs_abc_rfp(
     *,
     model: torch.nn.Module,
-    batches: list[tuple[torch.Tensor, torch.Tensor, torch.Tensor]],
+    batches: list[tuple[torch.Tensor, torch.Tensor, torch.Tensor]] = None,
+    full_dataset = None,
+    sample_size: int = None,
     ensemble_size: int,
     n_steps: int,
     n_proposals: int,
@@ -382,14 +414,50 @@ def run_gibbs_abc_rfp(
     reference_mmap: np.memmap,
     result_directory: str,
     log_diagnostics: bool = True,
+    resample_temporal: bool = False,
 ) -> dict[str, Any]:
     device = next(model.parameters()).device
     ref_full = torch.from_numpy(np.array(reference_mmap, copy=True)).to(device)
 
-    prev_all = torch.cat([b[0] for b in batches], dim=0).to(device)
-    curr_all = torch.cat([b[1] for b in batches], dim=0).to(device)
-    time_all = torch.cat([b[2] for b in batches], dim=0).to(device)
-    N, _, H, W = prev_all.shape  # C not used after buffers creation
+    # Handle temporal resampling vs fixed batches
+    if resample_temporal:
+        if full_dataset is None or sample_size is None:
+            raise ValueError("resample_temporal=True requires full_dataset and sample_size")
+        
+        print(f"[Temporal Resampling] Using {sample_size} resampled temporal points per Gibbs step")
+        
+        # Get dimensions from a sample batch first
+        sample_batch = next(iter(torch.utils.data.DataLoader(full_dataset, batch_size=1)))
+        _, current_sample, _ = sample_batch
+        V = current_sample.shape[1] if len(current_sample.shape) > 1 else 5  # num_variables
+        H = current_sample.shape[2] if len(current_sample.shape) > 2 else 64  # height 
+        W = current_sample.shape[3] if len(current_sample.shape) > 3 else 64  # width
+        
+        # Use actual dimensions
+        latitude = list(range(H))
+        longitude = list(range(W))
+        max_horizon = 240  # From config
+        num_variables = V
+        
+        # Get initial batch to determine dimensions
+        initial_batches = resample_temporal_batches(
+            full_dataset, sample_size, device, num_variables, max_horizon, latitude, longitude, step_seed=42
+        )
+        prev_all = torch.cat([b[0] for b in initial_batches], dim=0)
+        curr_all = torch.cat([b[1] for b in initial_batches], dim=0)
+        time_all = torch.cat([b[2] for b in initial_batches], dim=0)
+        N = sample_size  # Use sample_size for buffer allocation
+        
+    else:
+        if batches is None:
+            raise ValueError("batches required when resample_temporal=False")
+        
+        prev_all = torch.cat([b[0] for b in batches], dim=0).to(device)
+        curr_all = torch.cat([b[1] for b in batches], dim=0).to(device)
+        time_all = torch.cat([b[2] for b in batches], dim=0).to(device)
+        N = len(batches)
+    
+    _, _, H, W = prev_all.shape  # C not used after buffers creation
     V = curr_all.shape[1]
 
     buffers = {
@@ -433,6 +501,18 @@ def run_gibbs_abc_rfp(
 
     for s in tqdm(range(start_step, n_steps), desc="Gibbs", position=0):
         print(f"\n[Gibbs step {s+1}/{n_steps}]")
+        
+        # Resample temporal data for this Gibbs step
+        if resample_temporal:
+            step_seed = 1000 + s  # Different seed each step
+            current_batches = resample_temporal_batches(
+                full_dataset, sample_size, device, num_variables, max_horizon, latitude, longitude, step_seed
+            )
+            prev_all = torch.cat([b[0] for b in current_batches], dim=0)
+            curr_all = torch.cat([b[1] for b in current_batches], dim=0)
+            time_all = torch.cat([b[2] for b in current_batches], dim=0)
+            print(f"[Resampled] {sample_size} new temporal samples (seed={step_seed})")
+        
         if s and (s % ADAPT_EVERY == 0):
             proposal_std *= ADAPT_FACTOR
             print(f"[adapt] proposal σ -> {proposal_std.mean():.3f}")

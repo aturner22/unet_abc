@@ -23,6 +23,7 @@ class Config:
         self.n_gibbs_steps: int = raw["n_gibbs_steps"]
         self.n_proposals_per_variable: int = raw["n_proposals_per_variable"]
         self.proposal_scale: float = raw["proposal_scale"]
+        self.temporal_resampling: bool = raw.get("temporal_resampling", False)
         self.variable_names: list[str] = raw["variable_names"]
         self.num_variables: int = len(self.variable_names)
         self.num_static_fields: int = raw["num_static_fields"]

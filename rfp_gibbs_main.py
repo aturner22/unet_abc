@@ -65,20 +65,33 @@ def main():
     print("Preparing model and data loader...")
     loader, model, latitude, longitude, result_path = load_model_and_test_data(config, device, config.SEED)
 
-    print("Materializing input batches...")
-    cached_batches = list(tqdm(
-        materialise_batches(loader, device, config.num_variables, config.max_horizon, latitude, longitude),
-        total=config.sample_size,
-        desc="Loading batches"
-    ))
+    # Check if temporal resampling is enabled
+    use_temporal_resampling = getattr(config, 'temporal_resampling', False)
+    
+    if use_temporal_resampling:
+        print(f"Temporal resampling enabled: {config.sample_size} samples per Gibbs step")
+        # Get full dataset without subset sampling for resampling
+        full_dataset = loader.dataset.dataset if hasattr(loader.dataset, 'dataset') else loader.dataset
+        cached_batches = None
+    else:
+        print("Materializing input batches...")
+        cached_batches = list(tqdm(
+            materialise_batches(loader, device, config.num_variables, config.max_horizon, latitude, longitude),
+            total=config.sample_size,
+            desc="Loading batches"
+        ))
+        full_dataset = None
 
     print("Preparing standardized reference tensor...")
     reference_mmap = load_or_generate_standardized_reference(config, latitude, longitude)
 
-    example_input, example_output = cached_batches[0][0], cached_batches[0][1]
-    C = example_input.shape[1]
-    V = example_output.shape[1]
-    H, W = example_input.shape[-2:]
+    # Get example dimensions (not used in current implementation but kept for future compatibility)
+    if cached_batches:
+        example_input, example_output = cached_batches[0][0], cached_batches[0][1]
+    else:
+        # For temporal resampling, get dimensions from a sample
+        sample_data = next(iter(torch.utils.data.DataLoader(full_dataset, batch_size=1)))
+        example_input, example_output = sample_data[0].squeeze(0), sample_data[1].squeeze(0)
 
     print("Dynamic batch management will be handled automatically during inference...")
 
@@ -87,6 +100,8 @@ def main():
         results = run_gibbs_abc_rfp(
             model=model,
             batches=cached_batches,
+            full_dataset=full_dataset,
+            sample_size=config.sample_size,
             ensemble_size=config.ensemble_size,
             n_steps=config.n_gibbs_steps,
             n_proposals=config.n_proposals_per_variable,
@@ -94,7 +109,8 @@ def main():
             variable_names=config.variable_names,
             reference_mmap=reference_mmap,
             result_directory=result_path,
-            log_diagnostics=True
+            log_diagnostics=True,
+            resample_temporal=use_temporal_resampling
         )
 
 
