@@ -19,7 +19,7 @@ from core.plotting import (
     plot_crps_trace,
 )
 from core.evaluation import print_posterior_summary
-from core.gibbs_abc_threaded_rfp import run_gibbs_abc_rfp, compute_safe_batch_size
+from core.gibbs_abc_threaded_rfp import run_gibbs_abc_rfp
 
 
 def load_or_generate_standardized_reference(config, latitude, longitude) -> np.memmap:
