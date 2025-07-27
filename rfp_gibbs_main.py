@@ -92,7 +92,6 @@ def main():
             n_proposals=config.n_proposals_per_variable,
             num_variables=config.num_variables,
             variable_names=config.variable_names,
-            max_horizon=config.max_horizon,
             reference_mmap=reference_mmap,
             result_directory=result_path,
             log_diagnostics=True

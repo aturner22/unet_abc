@@ -32,8 +32,8 @@ class MemorySafeBatchManager:
         self.runtime_batch_size = None  # Can be reduced during runtime if needed
         
     def get_memory_stats(self):
-        """Get current GPU memory usage."""
-        if torch.cuda.is_available():
+        """Get current memory usage (GPU or CPU)."""
+        if torch.cuda.is_available() and self.device.type == 'cuda':
             allocated = torch.cuda.memory_allocated(self.device)
             total = torch.cuda.get_device_properties(self.device).total_memory
             free = total - allocated
@@ -41,7 +41,8 @@ class MemorySafeBatchManager:
         else:
             import psutil
             mem = psutil.virtual_memory()
-            return 0, mem.total, mem.available
+            # For CPU, we use available memory as our working space
+            return mem.used, mem.total, mem.available
     
     def test_batch_size(self, batch_size: int, model: torch.nn.Module, 
                        sample_input: torch.Tensor, sample_time: torch.Tensor) -> bool:
@@ -57,21 +58,39 @@ class MemorySafeBatchManager:
                 test_input = sample_input.repeat(repeats, 1, 1, 1)[:batch_size]
                 test_time = sample_time.repeat(repeats, 1)[:batch_size]
             
-            # Test multiple forward passes to simulate actual workload
-            # (CRPS computation will be done after, so this simulates the full memory load)
+            # More comprehensive test that simulates actual workload memory pattern
             with torch.no_grad():
-                output1 = model(test_input, test_time)
-                # Keep output in memory to simulate CRPS computation memory usage
-                output2 = model(test_input, test_time)
-                # Simulate the memory pattern during proposal evaluation
-                _ = torch.stack([output1, output2])  # This simulates keeping multiple proposal outputs
+                # Simulate the actual inference workload
+                output = model(test_input, test_time)
+                
+                # Simulate CRPS computation memory pattern:
+                K, V, H, W = output.shape[0], output.shape[1], output.shape[2], output.shape[3]
+                reshaped = output.view(K, -1)  # Flatten for CRPS
+                
+                # Simulate multiple operations that happen during proposal evaluation
+                temp_storage = output.clone()  # Simulate keeping best proposal
+                diff_computation = torch.abs(output - temp_storage)  # Simulate CRPS computation
+                
+                # Simulate the memory-intensive operations
+                if K > 1:
+                    # Test both small and larger tensor operations
+                    sample_pairs = torch.randint(0, K, (min(500, K*4),), device=output.device)
+                    pairwise_test = reshaped[sample_pairs[:len(sample_pairs)//2]] - reshaped[sample_pairs[len(sample_pairs)//2:]]
+                    _ = torch.abs(pairwise_test).mean()  # Force computation
+                
+                # Test peak memory usage by keeping multiple tensors
+                accumulated_memory = [output, temp_storage, diff_computation]
+                if len(accumulated_memory) > 2:
+                    _ = torch.stack(accumulated_memory[:2])  # Simulate tensor operations
                 
             # If we get here, it worked
-            del test_input, test_time, output1, output2
+            del test_input, test_time, output, reshaped, temp_storage, diff_computation
             return True
             
-        except (RuntimeError, MemoryError) as e:
-            if "out of memory" in str(e).lower() or isinstance(e, MemoryError):
+        except (RuntimeError, MemoryError, OSError) as e:
+            # OSError can be thrown on CPU when system runs out of memory
+            error_msg = str(e).lower()
+            if "out of memory" in error_msg or "memory" in error_msg or isinstance(e, (MemoryError, OSError)):
                 if torch.cuda.is_available():
                     torch.cuda.empty_cache()
                 return False
@@ -88,12 +107,27 @@ class MemorySafeBatchManager:
         if self.calibrated:
             return self.global_batch_size
             
-        allocated_before, total_mem, free_mem = self.get_memory_stats()
+        _, total_mem, free_mem = self.get_memory_stats()
         print(f"[MemorySafe] One-time calibration (Free: {free_mem/1e9:.1f}GB/{total_mem/1e9:.1f}GB)")
         
-        # Fast binary search - start with reasonable bounds
-        low, high = 1, min(max_search, 128)  # Cap at 128 for faster search
+        # Adaptive search bounds based on available memory
+        allocated, total_mem, free_mem = self.get_memory_stats()
+        
+        if self.device.type == 'cpu':
+            # For CPU: estimate batch size based on available system memory
+            # Assume each sample needs ~50MB (rough estimate for typical model)
+            estimated_sample_size = 50 * 1024 * 1024  # 50MB per sample
+            memory_based_limit = int(free_mem * 0.3 / estimated_sample_size)  # Use 30% of free memory
+            high = min(max_search, max(8, memory_based_limit))  # At least 8, but memory-aware
+        else:
+            # For GPU: use GPU memory more aggressively since it's dedicated
+            estimated_sample_size = 100 * 1024 * 1024  # 100MB per sample for GPU
+            memory_based_limit = int(free_mem * 0.6 / estimated_sample_size)  # Use 60% of free GPU memory
+            high = min(max_search, max(16, memory_based_limit))  # At least 16 for GPU
+        
+        low = 1
         best_working = 1
+        print(f"[MemorySafe] Search range: {low}-{high} (Free: {free_mem/1e9:.1f}GB)")
         
         while low <= high:
             mid = (low + high) // 2
@@ -107,14 +141,34 @@ class MemorySafeBatchManager:
                 high = mid - 1
                 print("✗")
         
-        # Apply safety margin - calibration uses small test, but actual workload is larger
-        safety_margin = 0.7  # Use 70% of calibrated size for safety
+        # Apply adaptive safety margin based on how much memory we have
+        allocated, total_mem, free_mem = self.get_memory_stats()
+        memory_pressure = allocated / total_mem
+        
+        if self.device.type == 'cpu':
+            # CPU: More aggressive if we have lots of free memory
+            if memory_pressure < 0.3:  # Low pressure
+                safety_margin = 0.8
+            elif memory_pressure < 0.6:  # Medium pressure
+                safety_margin = 0.65
+            else:  # High pressure
+                safety_margin = 0.5
+        else:
+            # GPU: Dedicated memory, can be more aggressive
+            if memory_pressure < 0.4:  # Low pressure
+                safety_margin = 0.9
+            elif memory_pressure < 0.7:  # Medium pressure
+                safety_margin = 0.8
+            else:  # High pressure
+                safety_margin = 0.7
+        
         safe_batch_size = max(1, int(best_working * safety_margin))
+        print(f"[MemorySafe] Memory pressure: {memory_pressure:.1%}, safety margin: {safety_margin:.1%}")
         
         # Cache globally for entire run
         self.global_batch_size = safe_batch_size
         self.calibrated = True
-        print(f"[MemorySafe] Calibrated: {best_working} → {safe_batch_size} (with safety margin)")
+        print(f"[MemorySafe] Calibrated: {best_working} → {safe_batch_size} (safety margin: {safety_margin:.1%})")
         
         return safe_batch_size
     
@@ -127,10 +181,28 @@ class MemorySafeBatchManager:
     def reduce_batch_size(self):
         """Reduce batch size due to runtime OOM."""
         current = self.runtime_batch_size or self.global_batch_size
-        new_size = max(1, current // 2)
+        
+        # Adaptive reduction based on current size
+        if current > 32:
+            new_size = max(8, current // 3)  # Reduce by 3x for large batches
+        elif current > 8:
+            new_size = max(4, current // 2)  # Reduce by 2x for medium batches
+        else:
+            new_size = max(1, current - 1)   # Reduce by 1 for small batches
+            
         self.runtime_batch_size = new_size
-        print(f"[MemorySafe] Reduced batch size due to OOM: {current} → {new_size}")
+        print(f"[MemorySafe] Adaptive batch size reduction due to OOM: {current} → {new_size}")
         return new_size
+    
+    def check_memory_pressure(self) -> bool:
+        """Check if we're approaching memory limits."""
+        if torch.cuda.is_available():
+            allocated, total, _ = self.get_memory_stats()
+            usage_ratio = allocated / total
+            if usage_ratio > 0.85:  # If using >85% of GPU memory
+                print(f"[MemorySafe] High memory pressure: {usage_ratio:.1%} used")
+                return True
+        return False
 
 
 def generate_joint_rfp(
@@ -208,11 +280,11 @@ def batched_forward_proposals(
     
     # Use cached batch size (very fast)
     optimal_batch_size = batch_manager.get_batch_size()
-    total_samples_per_batch = optimal_batch_size * ensemble_size
 
     joint_scores: list[float] = []
     best_proposal_output: torch.Tensor | None = None
     best_score = float("inf")
+    best_proposal_idx = -1
 
     for p in range(P):
         buffers["curr"][:N].copy_(curr_base)
@@ -229,6 +301,7 @@ def batched_forward_proposals(
         start = 0
         while start < N * ensemble_size:
             end = min(start + step, N * ensemble_size)
+            
             try:
                 with torch.no_grad():
                     y = model(full_input[start:end], full_time[start:end])
@@ -250,19 +323,31 @@ def batched_forward_proposals(
         y_full = torch.cat(out_chunks, dim=0).view(N, ensemble_size, V, H, W)
         proposal_output = y_full.permute(1, 0, 2, 3, 4)
 
+        # Compute CRPS score immediately
         joint_score = compute_crps_for_proposal(proposal_output, current_fields, V)
         joint_scores.append(joint_score)
 
+        # Only keep this proposal if it's the best so far
         if joint_score < best_score:
             best_score = joint_score
+            best_proposal_idx = p
+            
+            # Delete previous best to free memory
             if best_proposal_output is not None:
                 del best_proposal_output
-                torch.cuda.empty_cache()
+            
+            # Store new best (only one proposal in memory at a time)
             best_proposal_output = proposal_output.clone()
-
-        del proposal_output, y_full, out_chunks
+        
+        # IMMEDIATELY delete current proposal after evaluation
+        del proposal_output, y_full, out_chunks, full_input, full_time
+        
+        # Aggressive cleanup after each proposal
         torch.cuda.empty_cache()
+        
+        print(f"  Proposal {p+1}/{P}: CRPS={joint_score:.4f} {'(NEW BEST)' if p == best_proposal_idx else ''}")
 
+    print(f"  → Best proposal: {best_proposal_idx+1} with CRPS={best_score:.4f}")
     return best_proposal_output, joint_scores
 
 
@@ -275,7 +360,6 @@ def run_gibbs_abc_rfp(
     n_proposals: int,
     num_variables: int,
     variable_names: list[str],
-    max_horizon: int,
     reference_mmap: np.memmap,
     result_directory: str,
     log_diagnostics: bool = True,
