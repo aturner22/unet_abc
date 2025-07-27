@@ -182,16 +182,20 @@ class MemorySafeBatchManager:
         """Reduce batch size due to runtime OOM."""
         current = self.runtime_batch_size or self.global_batch_size
         
-        # Adaptive reduction based on current size
-        if current > 32:
-            new_size = max(8, current // 3)  # Reduce by 3x for large batches
-        elif current > 8:
-            new_size = max(4, current // 2)  # Reduce by 2x for medium batches
+        # More aggressive reduction strategy for persistent OOM
+        if current > 16:
+            new_size = max(4, current // 4)  # Reduce by 4x for large batches
+        elif current > 4:
+            new_size = max(2, current // 2)  # Reduce by 2x for medium batches
+        elif current > 1:
+            new_size = 1                     # Down to minimum
         else:
-            new_size = max(1, current - 1)   # Reduce by 1 for small batches
+            # Already at minimum - this suggests fundamental memory issue
+            print(f"[MemorySafe] WARNING: Already at batch size 1, cannot reduce further")
+            new_size = 1
             
         self.runtime_batch_size = new_size
-        print(f"[MemorySafe] Adaptive batch size reduction due to OOM: {current} → {new_size}")
+        print(f"[MemorySafe] Aggressive batch size reduction due to OOM: {current} → {new_size}")
         return new_size
     
     def check_memory_pressure(self) -> bool:
@@ -302,23 +306,38 @@ def batched_forward_proposals(
         while start < N * ensemble_size:
             end = min(start + step, N * ensemble_size)
             
-            try:
-                with torch.no_grad():
-                    y = model(full_input[start:end], full_time[start:end])
-                out_chunks.append(y)
-                start = end
-            except RuntimeError as e:
-                if "out of memory" in str(e).lower():
-                    torch.cuda.empty_cache()
-                    optimal_batch_size = batch_manager.reduce_batch_size()
-                    step = optimal_batch_size * ensemble_size
-                    end = min(start + step, N * ensemble_size)
+            # Retry loop for handling OOM with exponential backoff
+            retry_count = 0
+            max_retries = 5
+            
+            while retry_count <= max_retries:
+                try:
                     with torch.no_grad():
                         y = model(full_input[start:end], full_time[start:end])
                     out_chunks.append(y)
                     start = end
-                else:
-                    raise e
+                    break  # Success, exit retry loop
+                    
+                except RuntimeError as e:
+                    if "out of memory" in str(e).lower() and retry_count < max_retries:
+                        retry_count += 1
+                        torch.cuda.empty_cache()
+                        
+                        # Reduce batch size more aggressively with each retry
+                        optimal_batch_size = batch_manager.reduce_batch_size()
+                        step = optimal_batch_size * ensemble_size
+                        end = min(start + step, N * ensemble_size)
+                        
+                        print(f"[MemorySafe] OOM retry {retry_count}/{max_retries}, new batch size: {optimal_batch_size}")
+                        
+                        # If we're down to batch size 1 and still failing, something is seriously wrong
+                        if optimal_batch_size == 1 and retry_count >= 3:
+                            raise RuntimeError(f"Persistent OOM even with batch size 1. Available memory may be insufficient.") from e
+                    else:
+                        raise e
+            
+            if retry_count > max_retries:
+                raise RuntimeError(f"Failed to process batch after {max_retries} retries with batch size reductions")
 
         y_full = torch.cat(out_chunks, dim=0).view(N, ensemble_size, V, H, W)
         proposal_output = y_full.permute(1, 0, 2, 3, 4)
