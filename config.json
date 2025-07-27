@@ -2,10 +2,10 @@
   "name": "temporal_resampling_rfp",
   "description": "Using temporal resampling.",
 
-  "sample_size": 200,
-  "ensemble_size": 100,
-  "n_gibbs_steps": 200,
-  "n_proposals_per_variable": 10,
+  "sample_size": 100,
+  "ensemble_size": 50,
+  "n_gibbs_steps": 150,
+  "n_proposals_per_variable": 8,
   "proposal_scale": 0.05,
   "temporal_resampling": true,
 
