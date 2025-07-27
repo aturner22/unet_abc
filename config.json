@@ -1,11 +1,11 @@
 {
-  "name": "temporal_resampling_rfp",
-  "description": "Using temporal resampling.",
+  "name": "production_run_fp",
+  "description": "Using temporal resampling, gibbs, rfp with energy score. Full shabang. Hopefully no bugs!",
 
   "sample_size": 100,
   "ensemble_size": 50,
-  "n_gibbs_steps": 150,
-  "n_proposals_per_variable": 8,
+  "n_gibbs_steps": 175,
+  "n_proposals_per_variable": 10,
   "proposal_scale": 0.05,
   "temporal_resampling": true,
 
