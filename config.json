@@ -1,11 +1,11 @@
 {
   "name": "temporal_resampling_rfp",
-  "description": "Using temporal resampling for faster computation - 150 samples per step across 50 steps = 7500 total temporal coverage vs 500 fixed.",
+  "description": "Using temporal resampling.",
 
-  "sample_size": 150,
-  "ensemble_size": 50,
-  "n_gibbs_steps": 50,
-  "n_proposals_per_variable": 8,
+  "sample_size": 200,
+  "ensemble_size": 100,
+  "n_gibbs_steps": 200,
+  "n_proposals_per_variable": 10,
   "proposal_scale": 0.05,
   "temporal_resampling": true,
 
