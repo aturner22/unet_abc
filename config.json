@@ -2,8 +2,8 @@
   "name": "energy_score_testing",
   "description": "First run using energy score",
 
-  "sample_size": 10,
-  "ensemble_size": 10,
+  "sample_size": 500,
+  "ensemble_size": 50,
   "n_gibbs_steps": 60,
   "n_proposals_per_variable": 10,
   "proposal_scale": 0.05,
