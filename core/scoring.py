@@ -44,12 +44,22 @@ def multivariate_energy_score(
         )
         second_term = pairwise_distances.mean(dim=(0, 1))
     else:
-        n_samples = 500
+        n_samples = min(256, K * (K - 1) // 2)
         idx1 = torch.randint(0, K, (n_samples,), device=ensemble.device)
         idx2 = torch.randint(0, K, (n_samples,), device=ensemble.device)
-        diffs = ensemble_flat[idx1] - ensemble_flat[idx2]
-        sampled_distances = torch.norm(diffs, dim=-1)
-
+        
+        # Compute distances in smaller chunks to avoid OOM
+        chunk_size = 10
+        distance_chunks = []
+        for i in range(0, n_samples, chunk_size):
+            end_idx = min(i + chunk_size, n_samples)
+            chunk_idx1 = idx1[i:end_idx]
+            chunk_idx2 = idx2[i:end_idx]
+            diffs = ensemble_flat[chunk_idx1] - ensemble_flat[chunk_idx2]
+            distances = torch.norm(diffs, dim=-1)
+            distance_chunks.append(distances)
+        
+        sampled_distances = torch.cat(distance_chunks, dim=0)
         second_term = sampled_distances.mean(dim=0)
 
     energy = first_term - 0.5 * second_term
