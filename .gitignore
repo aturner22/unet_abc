@@ -1,12 +1,12 @@
-.env
 *.pdf
 *.gif
 *.csv
 __pycache__
 *.zarr
-venv
-data*
-era5_data*
+.venv
+data/*
+era5_data/*
 residual_std
 .DS_Store
 archive_
+report/*

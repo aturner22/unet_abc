@@ -1,0 +1,29 @@
+2025-08-05 14:50:52,379 - INFO - --- Computing Configuration ---
+2025-08-05 14:50:52,379 - INFO - Platform: Darwin 24.5.0
+2025-08-05 14:50:52,379 - INFO - Python version: 3.12.6
+2025-08-05 14:50:52,379 - INFO - CUDA available: False
+2025-08-05 14:50:52,379 - INFO - torch version: 2.7.1
+2025-08-05 14:50:52,379 - INFO - Number of CPUs: 11
+2025-08-05 14:50:52,379 - INFO - Physical CPU cores: 11
+2025-08-05 14:50:52,379 - INFO - TORCH_NUM_THREADS: 5
+2025-08-05 14:50:52,379 - INFO - N_WORKERS: None
+2025-08-05 14:50:52,379 - INFO - PARALLEL_BACKEND: None
+2025-08-05 14:50:52,379 - INFO - --------------------------------
+2025-08-05 14:50:52,379 - INFO - Starting ABC-RFP procedure with device: cpu
+2025-08-05 14:50:52,379 - INFO - Configuration: energy scoring, 60 steps, 10 ensemble size
+2025-08-05 14:50:52,455 - INFO - Using temporal resampling: 10 samples per Gibbs step
+2025-08-05 14:50:52,455 - INFO - Loading precomputed standardized ERA5 tensor
+2025-08-05 14:50:52,460 - INFO - Commencing ABC-Gibbs inference with RFP perturbations
+2025-08-05 14:51:26,202 - INFO - Using ENERGY as discrepancy measure
+2025-08-05 14:51:26,208 - INFO - Temporal resampling enabled: 10 samples per step
+2025-08-05 14:51:26,528 - DEBUG - Beginning Gibbs iteration s = 0
+2025-08-05 14:51:26,555 - DEBUG - Sampling proposals for variable index v = 0
+2025-08-05 14:51:26,555 - DEBUG - Current alpha_v: 0.55786
+2025-08-05 14:51:26,555 - DEBUG - Proposal standard deviation alpha_v: 0.05000
+2025-08-05 14:51:26,560 - DEBUG - Generated proposals: [0.6074663062787817, 0.5512215578397911, 0.4791332314014258, 0.525219036964866, 0.5653007561156604, 0.5715115763112311, 0.5242014546068202, 0.5323344152444335, 0.5576569842709138, 0.5699067621931235]
+2025-08-05 14:51:26,561 - DEBUG - previous_fields.shape[1] = 12
+2025-08-05 14:51:26,561 - DEBUG - V = 5
+2025-08-05 14:51:26,561 - DEBUG - Expected: 2V + S = 12
+2025-08-05 14:51:26,561 - DEBUG - Evaluating batched proposals for 10 perturbation(s)
+2025-08-05 14:51:26,591 - DEBUG - Calibrating batch size for input shape: torch.Size([20, 12, 32, 64])
+2025-08-05 14:51:26,595 - INFO - Memory calibration (Free: 3.2GB/19.3GB)

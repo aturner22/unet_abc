@@ -18,7 +18,7 @@
     "adapt_every": 5,
     "adapt_factor": 0.65,
     "adapt_stop": 40,
-    "eps_energy": 1e-6,
+    "eps_energy": 1e-4,
     "checkpoint_file": "gibbs_checkpoint_step.npz"
   },
 
