@@ -314,9 +314,9 @@ def run_gibbs_abc_rfp(
             longitude,
             step_seed=42,
         )
-        prev_all = torch.cat([b[0] for b in initial_batches], dim=0)
-        curr_all = torch.cat([b[1] for b in initial_batches], dim=0)
-        time_all = torch.cat([b[2] for b in initial_batches], dim=0)
+        prev_all = torch.cat([b[0] for b in initial_batches], dim=0).to(device)
+        curr_all = torch.cat([b[1] for b in initial_batches], dim=0).to(device)
+        time_all = torch.cat([b[2] for b in initial_batches], dim=0).to(device)
         N = sample_size
     else:
         if batches is None:
@@ -382,9 +382,9 @@ def run_gibbs_abc_rfp(
                 longitude,
                 step_seed,
             )
-            prev_all = torch.cat([b[0] for b in current_batches], dim=0)
-            curr_all = torch.cat([b[1] for b in current_batches], dim=0)
-            time_all = torch.cat([b[2] for b in current_batches], dim=0)
+            prev_all = torch.cat([b[0] for b in current_batches], dim=0).to(device)
+            curr_all = torch.cat([b[1] for b in current_batches], dim=0).to(device)
+            time_all = torch.cat([b[2] for b in current_batches], dim=0).to(device)
 
         if s and (s % config.adapt_every == 0) and (s < config.adapt_stop):
             proposal_std *= config.adapt_factor
