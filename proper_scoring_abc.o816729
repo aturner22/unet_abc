@@ -1,0 +1,37 @@
+/var/spool/pbs/mom_priv/jobs/816729.pbs-7.SC: line 15: .venv/bin/activate: No such file or directory
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+ModuleNotFoundError: No module named 'config'
+mkdir: cannot create directory ‘’: No such file or directory
+Running at Tue  5 Aug 15:18:10 UTC 2025 on cx3-20-4.cx3.hpc.ic.ac.uk
+CUDA_VISIBLE_DEVICES=GPU-466e1db1-30cb-31f2-9c30-c00d3dda30ad
+Tue Aug  5 16:18:10 2025       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 565.57.01              Driver Version: 565.57.01      CUDA Version: 12.7     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA L40S                    On  |   00000000:33:00.0 Off |                    0 |
+| N/A   41C    P8             35W /  350W |       1MiB /  46068MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+/var/spool/pbs/mom_priv/jobs/816729.pbs-7.SC: line 40: /output_gpu.log: Permission denied
+
+====================================
+CPU Time used: 00:00:00
+CPU Percent: 0%
+Memory usage: 0b
+Approx Power usage: 0.0
+Walltime usage: 00:00:06
+
+====================================
