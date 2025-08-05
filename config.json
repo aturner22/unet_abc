@@ -1,6 +1,6 @@
 {
-  "name": "energy_score_testing",
-  "description": "First run using energy score",
+  "name": "energy_score_prod",
+  "description": "production run using energy score. if this goes well i can do another run with crps",
 
   "sample_size": 500,
   "ensemble_size": 50,
@@ -16,15 +16,15 @@
     "initial_alpha_range": [0.05, 1],
     "min_alpha": 1e-4,
     "adapt_every": 5,
-    "adapt_factor": 0.65,
-    "adapt_stop": 40,
+    "adapt_factor": 0.85,
+    "adapt_stop": 30,
     "eps_energy": 1e-6,
     "checkpoint_file": "gibbs_checkpoint_step.npz"
   },
 
   "scoring_params": {
     "ensemble_threshold_exact": 10, 
-    "sampling_approximation_size": 500
+    "sampling_approximation_size": 100
   },
 
   "memory_management": {
