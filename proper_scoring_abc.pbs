@@ -21,9 +21,18 @@ CONFIG_PATH="config.json"
 
 RESULT_DIR=$(python3 -c "
 import os
-from config import Config
+import sys
+sys.path.insert(0, '.')
+from core.config import Config
 cfg = Config('$CONFIG_PATH', timestamp=os.environ['CONFIG_TIMESTAMP'])
-print(cfg.result_directory)")
+print(cfg.result_directory)" 2>&1)
+
+echo "RESULT_DIR determined as: '$RESULT_DIR'"
+
+if [ -z "$RESULT_DIR" ]; then
+    echo "ERROR: RESULT_DIR is empty, using fallback"
+    RESULT_DIR="./results/fallback_$(date +%Y%m%d_%H%M%S)"
+fi
 
 mkdir -p "$RESULT_DIR"
 rm -f "$RESULT_DIR/output_gpu.log" "$RESULT_DIR/error_gpu.log" "$RESULT_DIR/gibbs_abc_gpu.o*"
