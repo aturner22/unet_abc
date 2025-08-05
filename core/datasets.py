@@ -124,21 +124,21 @@ class ERA5Dataset(torch.utils.data.Dataset):
             met_vars = input_tensor[:n_met_channels]
             static_vars = input_tensor[n_met_channels:]
 
-            expanded_mean = self.mean.repeat(n_actual_fields).reshape(-1, 1, 1).to(input_tensor.device)
-            expanded_std = self.std_dev.repeat(n_actual_fields).reshape(-1, 1, 1).to(input_tensor.device)
+            expanded_mean = torch.tensor(self.mean).repeat(n_actual_fields).reshape(-1, 1, 1).to(input_tensor.device)
+            expanded_std = torch.tensor(self.std_dev).repeat(n_actual_fields).reshape(-1, 1, 1).to(input_tensor.device)
 
             met_vars_norm = (met_vars - expanded_mean) / expanded_std
             input_tensor = torch.cat([met_vars_norm, static_vars], dim=0)
         else:
-            expanded_mean = self.mean.repeat(n_actual_fields).reshape(-1, 1, 1).to(input_tensor.device)
-            expanded_std = self.std_dev.repeat(n_actual_fields).reshape(-1, 1, 1).to(input_tensor.device)
+            expanded_mean = torch.tensor(self.mean).repeat(n_actual_fields).reshape(-1, 1, 1).to(input_tensor.device)
+            expanded_std = torch.tensor(self.std_dev).repeat(n_actual_fields).reshape(-1, 1, 1).to(input_tensor.device)
             input_tensor = (
                 input_tensor[:n_met_channels] - expanded_mean
             ) / expanded_std
 
         target_tensor = (
-            target_tensor - self.mean.reshape(-1, 1, 1).to(target_tensor.device)
-        ) / self.std_dev.reshape(-1, 1, 1).to(target_tensor.device)
+            target_tensor - torch.tensor(self.mean).reshape(-1, 1, 1).to(target_tensor.device)
+        ) / torch.tensor(self.std_dev).reshape(-1, 1, 1).to(target_tensor.device)
 
         return input_tensor, target_tensor, lead_time
 
