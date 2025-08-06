@@ -42,9 +42,11 @@ def compute_rank_histogram(
 ) -> torch.Tensor:
     validate_tensor_shapes(ensemble, target)
     with torch.no_grad():
+        # Compute ranks: number of ensemble members below each target value
         rank_counts = (ensemble < target.unsqueeze(0)).sum(dim=0)
-    histogram = rank_counts.view(-1).float().cpu().numpy() / ensemble_size
-    return histogram
+    # Return integer ranks (0 to ensemble_size), not normalized values
+    ranks = rank_counts.view(-1).int().cpu().numpy()
+    return ranks
 
 
 def compute_mean_absolute_error(ensemble: torch.Tensor, target: torch.Tensor) -> float:

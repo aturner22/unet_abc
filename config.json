@@ -1,6 +1,6 @@
 {
-  "name": "energy_score_prod",
-  "description": "production run using energy score. if this goes well i can do another run with crps",
+  "name": "crps_prod",
+  "description": "trying with crps now",
 
   "sample_size": 500,
   "ensemble_size": 50,
@@ -8,7 +8,7 @@
   "n_proposals_per_variable": 10,
   "proposal_scale": 0.05,
   "temporal_resampling": true,
-  "score_function": "energy",
+  "score_function": "crps",
 
   "n_universe_samples": 350640,
 
