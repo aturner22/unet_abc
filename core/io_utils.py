@@ -79,7 +79,7 @@ def load_model_and_test_data(
         img_resolution=64,
     )
     model_ckpt = "./models/deterministic-iterative-6h/best_model.pth"
-    model.load_state_dict(torch.load(model_ckpt, map_location=device))
+    model.load_state_dict(torch.load(model_ckpt, map_location=device),strict=False)
     model.to(device).eval()
 
     full_dataset = ERA5Dataset(
@@ -102,11 +102,7 @@ def load_model_and_test_data(
 def save_posterior_statistics(results: dict, output_directory: Path) -> None:
     np.save(output_directory / "posterior_samples.npy", results["posterior_samples"])
     np.save(output_directory / "posterior_scores.npy", results["posterior_scores"])
-    np.save(output_directory / "posterior_mean.npy", results["posterior_mean"])
-    np.save(output_directory / "posterior_variance.npy", results["posterior_variance"])
-    np.save(output_directory / "ensemble_mae.npy", results["ensemble_mae"])
-    np.save(output_directory / "ensemble_spread.npy", results["ensemble_spread"])
-    np.savez(output_directory / "results.npz", **results)
+
 
 
 def log_computing_configuration() -> None:

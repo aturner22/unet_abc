@@ -24,6 +24,12 @@ class Config:
         self.temporal_resampling: bool = raw.get("temporal_resampling", False)
         self.score_function: str = raw["score_function"]
 
+        self.inference_mode: str = raw["inference_mode"]
+        self.abc_epsilon: int = raw["abc_epsilon"]
+        self.adaptive_epsilon: bool = raw["adaptive_epsilon"]
+        self.min_epsilon: float = raw["min_epsilon"]
+        self.epsilon_quantile: float = raw["epsilon_quantile"]
+
         abc_params = raw.get("abc_params", {})
         self.initial_alpha_range: tuple = tuple(
             abc_params.get("initial_alpha_range", [0.05, 1.5])

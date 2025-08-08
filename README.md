@@ -1,28 +1,33 @@
-# Code for the ICLR 2025 paper [Continuous Ensemble Weather Forecasting with Diffusion models](https://arxiv.org/abs/2410.05431)
+# ABC-RFP: Approximate Bayesian Computation with Rejection-based Forward Proposals
 
-This repository contains all code needed to train and evaluate the models proposed in the paper.
+This repository implements a high-dimensional Approximate Bayesian Computation framework using Gibbs sampling with rejection-based forward proposals (ABC-RFP) for spatiotemporal model calibration. The methodology is non-parametric and ensemble-based, evaluating discrepancy between generated and reference atmospheric states via proper scoring rules (CRPS, Energy Score).
+
+Adapted from [Continuous Ensemble Weather Forecasting with Diffusion Models](https://arxiv.org/abs/2410.05431). We thank Martin Andrae for providing a pretrained U-Net used in this repository.
+
+## Methodological Summary
+
+* ABC-Gibbs inference over perturbation coefficients $\alpha \in \mathbb{R}^P_+$.
+* Proposals generated via scaled differences of ERA5 field pairs.
+* Forecast ensemble generated via pretrained deterministic U-Net.
+* Discrepancy minimisation via proper scoring (CRPS / Energy).
+* Adaptive epsilon scheduling and memory-aware batch evaluation.
 
 ## Prerequisites
 
-The code should be runnable with a standard setup of pytorch with some additional packages listed below.
+Tested with Python 3.10+ and PyTorch 2.0+.
 
-- pytorch
-- pandas
-- numpy
-- tqdm
-- matplotlib
-- zarr
-- xarray
-- jupyter
-- ipykernel
-- cartopy (for plotting)
-- ffmpeg (for animations)
+**Dependencies:**
+
+* `pytorch`, `numpy`, `pandas`, `tqdm`, `matplotlib`
+* `zarr`, `xarray`, `jupyter`, `ipykernel`
+* `cartopy` (for plotting),
 
 ## Data Preparation
 
-First, download ERA5 data with 5.625deg from [WeatherBench](https://dataserv.ub.tum.de/index.php/s/m1524895). The data directory should look like the following
+Download 5.625° ERA5 data from [WeatherBench](https://dataserv.ub.tum.de/index.php/s/m1524895):
+
 ```
-era5_data
+era5_data/
    |-- 10m_u_component_of_wind
    |-- 10m_v_component_of_wind
    |-- 2m_temperature
@@ -31,44 +36,30 @@ era5_data
    |-- temperature_850
 ```
 
-The data is loaded as ``.npy`` files instead of ``netcdf`` so you need to run the ``create_dataset.py`` script.
+Run `create_dataset.py` to convert the data into `.npy` format required by the code.
 
+## Execution
 
-## Training
+To run ABC-RFP inference:
 
-To train a model, locate a relevant ``config.json`` file under ``configs/train`` and run
-```
-python train.py configs/train/config.json
-```
-
-See the ``guide.json`` for explanations of all config parameters.
-
-Some of the models trained for the paper are available as checkpoints under ``models/``.
-
-## Generation and Evaluation
-
-To generate and save predictions from a trained model, locate a relevant ``config.json`` file under ``configs/predict`` and run
-```
-python predict.py configs/predict/config.json
+```bash
+python main.py --config path/to/config.json
 ```
 
-See the ``guide.json`` for explanations of all config parameters.
+For HPC environments:
 
-This also evaluates the model and saves metrics to a ``zarr` file.
-
-## Plotting
-
-The notebook ``plot.ipynb`` contains code to visualize metrics and forecasts.
-
-## If you use this code for some purpose, please cite:
-
+```bash
+export CONFIG_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 ```
-@inproceedings{
-    andrae2025continuous,
-    title={Continuous Ensemble Weather Forecasting with Diffusion models},
-    author={Martin Andrae and Tomas Landelius and Joel Oskarsson and Fredrik Lindsten},
-    booktitle={The Thirteenth International Conference on Learning Representations},
-    year={2025},
-    url={https://openreview.net/forum?id=ePEZvQNFDW}
-}
-```
+
+## Output
+
+Posterior statistics and diagnostics are saved to the configured result directory:
+
+* `posterior_samples.npy`, `posterior_scores.npy`
+* `posterior_mean.npy`, `posterior_variance.npy`
+* `results.npz`
+
+## License
+
+Research use only. Contact authors for commercial licensing or reuse inquiries.

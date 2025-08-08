@@ -617,8 +617,17 @@ class DetPrecond(torch.nn.Module):
             attn_resolutions=[32],
             label_dropout=label_dropout,
         )
+        bias_corrections_standardised = torch.tensor([
+            0.069536,  # z500 bias correction
+            0.030167,  # t850 bias correction
+            0.045228,  # t2m bias correction
+            0.034234,  # u10 bias correction
+            0.000000,  # v10 bias correction
+        ])
+        self.bias_correction = torch.nn.Parameter(bias_corrections_standardised)
 
     def forward(self, x, time_labels, class_labels=None):
         x = x.to(torch.float32)
         D_x = self.model(x, time_labels, class_labels=class_labels).to(torch.float32)
+        D_x = D_x + self.bias_correction.view(1, -1, 1, 1)
         return D_x
