@@ -1,6 +1,6 @@
 {
-  "name": "greedy_abc_energy",
-  "description": "Production run of greedy_abc with energy score",
+  "name": "smc_gibbs_abc_energy",
+  "description": "Production run of smc_gibbs_abc with energy score",
 
   "sample_size": 100,
   "ensemble_size": 50,
@@ -10,7 +10,7 @@
   "temporal_resampling": true,
   "score_function": "energy",
 
-  "inference_mode": "greedy",
+  "inference_mode": "smc_gibbs",
   "abc_epsilon": 0.02, 
   "adaptive_epsilon": true,
   "min_epsilon": 0.01,
