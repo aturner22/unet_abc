@@ -1,11 +1,11 @@
 {
-  "name": "gibbs_abc_test",
-  "description": "hpc run of gibbs procedure",
+  "name": "gibbs_abc_energy_score",
+  "description": "Production run of ",
 
-  "sample_size": 100,
-  "ensemble_size": 50,
-  "n_gibbs_steps": 30,
-  "n_proposals_per_variable": 20,
+  "sample_size": 128,
+  "ensemble_size": 64,
+  "n_gibbs_steps": 128,
+  "n_proposals_per_variable": 16,
   "proposal_scale": 0.1,
   "temporal_resampling": true,
   "score_function": "energy",
