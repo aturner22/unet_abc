@@ -1,6 +1,6 @@
 {
-  "name": "gibbs_abc_crps",
-  "description": "Production run of gibs_abc with crps",
+  "name": "greedy_abc_energy",
+  "description": "Production run of greedy_abc with energy score",
 
   "sample_size": 100,
   "ensemble_size": 50,
@@ -8,9 +8,9 @@
   "n_proposals_per_variable": 16,
   "proposal_scale": 0.1,
   "temporal_resampling": true,
-  "score_function": "crps",
+  "score_function": "energy",
 
-  "inference_mode": "conditional_gibbs",
+  "inference_mode": "greedy",
   "abc_epsilon": 0.02, 
   "adaptive_epsilon": true,
   "min_epsilon": 0.01,
