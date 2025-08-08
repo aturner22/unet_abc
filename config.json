@@ -1,6 +1,6 @@
 {
   "name": "gibbs_abc_crps",
-  "description": "Production run of ",
+  "description": "Production run of crps",
 
   "sample_size": 128,
   "ensemble_size": 64,
