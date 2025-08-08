@@ -1,0 +1,428 @@
+2025-08-08 19:43:41,851 - INFO - --- Computing Configuration ---
+2025-08-08 19:43:41,852 - INFO - Platform: Linux 4.18.0-477.27.1.el8_8.x86_64
+2025-08-08 19:43:41,852 - INFO - Python version: 3.12.11
+2025-08-08 19:43:41,852 - INFO - CUDA available: True
+2025-08-08 19:43:41,901 - INFO - CUDA device count: 1
+2025-08-08 19:43:41,905 - INFO - CUDA device name: NVIDIA L40S
+2025-08-08 19:43:41,905 - INFO - CUDA device capability: (8, 9)
+2025-08-08 19:43:41,906 - INFO - CUDA memory allocated: 0.00 GB
+2025-08-08 19:43:41,906 - INFO - CUDA memory reserved: 0.00 GB
+2025-08-08 19:43:41,906 - INFO - torch version: 2.7.1+cu126
+2025-08-08 19:43:41,906 - INFO - Number of CPUs: 64
+2025-08-08 19:43:41,906 - INFO - Physical CPU cores: 64
+2025-08-08 19:43:41,906 - INFO - TORCH_NUM_THREADS: 1
+2025-08-08 19:43:41,906 - INFO - N_WORKERS: 16
+2025-08-08 19:43:41,906 - INFO - PARALLEL_BACKEND: thread
+2025-08-08 19:43:41,906 - INFO - --------------------------------
+2025-08-08 19:43:41,906 - INFO - Starting ABC-RFP procedure with device: cuda
+2025-08-08 19:43:41,906 - INFO - Configuration: energy scoring, 128 steps, 64 ensemble size
+2025-08-08 19:43:42,774 - INFO - Using temporal resampling: 128 samples per Gibbs step
+2025-08-08 19:43:42,774 - INFO - Loading precomputed standardised ERA5 tensor
+2025-08-08 19:43:42,881 - INFO - Beginning ABC-Gibbs inference with RFP perturbations
+2025-08-08 19:44:00,789 - INFO - Using ENERGY as discrepancy measure
+2025-08-08 19:44:00,789 - INFO - Inference mode: conditional_gibbs
+2025-08-08 19:44:00,789 - INFO - Temporal resampling enabled: 128 samples per step
+Gibbs Steps:   0%|          | 0/128 [00:00<?, ?it/s]2025-08-08 19:44:14,648 - DEBUG - Beginning Gibbs iteration s = 0
+
+  0%|          | 0/5 [00:00<?, ?it/s][A2025-08-08 19:44:25,324 - DEBUG - Calibrating batch size for input shape: torch.Size([128, 12, 32, 64])
+2025-08-08 19:44:25,324 - INFO - Memory calibration (Free: 27.1GB/47.7GB)
+2025-08-08 19:44:27,347 - WARNING - OOM retry 1/5, batch size: 25
+2025-08-08 19:44:33,038 - DEBUG - Joint score for alpha[0]: 24.6974
+2025-08-08 19:44:38,793 - DEBUG - Joint score for alpha[1]: 21.6387
+2025-08-08 19:44:44,459 - DEBUG - Joint score for alpha[2]: 21.4842
+2025-08-08 19:44:50,126 - DEBUG - Joint score for alpha[3]: 21.6830
+2025-08-08 19:44:55,792 - DEBUG - Joint score for alpha[4]: 24.2875
+2025-08-08 19:45:01,470 - DEBUG - Joint score for alpha[5]: 22.4276
+2025-08-08 19:45:07,140 - DEBUG - Joint score for alpha[6]: 24.0754
+2025-08-08 19:45:12,813 - DEBUG - Joint score for alpha[7]: 22.5129
+2025-08-08 19:45:18,487 - DEBUG - Joint score for alpha[8]: 21.9661
+2025-08-08 19:45:24,165 - DEBUG - Joint score for alpha[9]: 21.3252
+2025-08-08 19:45:29,840 - DEBUG - Joint score for alpha[10]: 21.6136
+2025-08-08 19:45:35,515 - DEBUG - Joint score for alpha[11]: 21.3859
+2025-08-08 19:45:41,186 - DEBUG - Joint score for alpha[12]: 21.7934
+2025-08-08 19:45:46,865 - DEBUG - Joint score for alpha[13]: 22.2697
+2025-08-08 19:45:52,548 - DEBUG - Joint score for alpha[14]: 22.5143
+2025-08-08 19:45:58,230 - DEBUG - Joint score for alpha[15]: 24.7624
+
+ 20%|██        | 1/5 [01:33<06:13, 93.43s/it][A2025-08-08 19:46:04,043 - DEBUG - Joint score for alpha[0]: 20.8464
+2025-08-08 19:46:09,736 - DEBUG - Joint score for alpha[1]: 20.3453
+2025-08-08 19:46:15,418 - DEBUG - Joint score for alpha[2]: 19.9631
+2025-08-08 19:46:21,098 - DEBUG - Joint score for alpha[3]: 20.9810
+2025-08-08 19:46:26,780 - DEBUG - Joint score for alpha[4]: 19.8997
+2025-08-08 19:46:32,465 - DEBUG - Joint score for alpha[5]: 21.5528
+2025-08-08 19:46:38,149 - DEBUG - Joint score for alpha[6]: 20.2912
+2025-08-08 19:46:43,834 - DEBUG - Joint score for alpha[7]: 20.3534
+2025-08-08 19:46:49,518 - DEBUG - Joint score for alpha[8]: 21.0902
+2025-08-08 19:46:55,211 - DEBUG - Joint score for alpha[9]: 21.3927
+2025-08-08 19:47:00,895 - DEBUG - Joint score for alpha[10]: 20.4036
+2025-08-08 19:47:06,583 - DEBUG - Joint score for alpha[11]: 20.2419
+2025-08-08 19:47:12,267 - DEBUG - Joint score for alpha[12]: 19.9587
+2025-08-08 19:47:17,997 - DEBUG - Joint score for alpha[13]: 20.8263
+2025-08-08 19:47:23,721 - DEBUG - Joint score for alpha[14]: 21.0056
+2025-08-08 19:47:29,406 - DEBUG - Joint score for alpha[15]: 20.5652
+
+ 40%|████      | 2/5 [03:04<04:36, 92.10s/it][A2025-08-08 19:47:35,345 - DEBUG - Joint score for alpha[0]: 19.3384
+2025-08-08 19:47:41,034 - DEBUG - Joint score for alpha[1]: 18.9351
+2025-08-08 19:47:46,721 - DEBUG - Joint score for alpha[2]: 19.5604
+2025-08-08 19:47:52,407 - DEBUG - Joint score for alpha[3]: 19.2840
+2025-08-08 19:47:58,096 - DEBUG - Joint score for alpha[4]: 19.7289
+2025-08-08 19:48:03,781 - DEBUG - Joint score for alpha[5]: 19.2831
+2025-08-08 19:48:09,462 - DEBUG - Joint score for alpha[6]: 19.5368
+2025-08-08 19:48:15,147 - DEBUG - Joint score for alpha[7]: 19.5952
+2025-08-08 19:48:20,828 - DEBUG - Joint score for alpha[8]: 19.3812
+2025-08-08 19:48:26,509 - DEBUG - Joint score for alpha[9]: 19.2397
+2025-08-08 19:48:32,189 - DEBUG - Joint score for alpha[10]: 19.1185
+2025-08-08 19:48:37,874 - DEBUG - Joint score for alpha[11]: 19.3598
+2025-08-08 19:48:43,560 - DEBUG - Joint score for alpha[12]: 19.1203
+2025-08-08 19:48:49,243 - DEBUG - Joint score for alpha[13]: 19.0981
+2025-08-08 19:48:54,935 - DEBUG - Joint score for alpha[14]: 18.7540
+2025-08-08 19:49:00,617 - DEBUG - Joint score for alpha[15]: 19.5440
+
+ 60%|██████    | 3/5 [04:35<03:03, 91.70s/it][A2025-08-08 19:49:06,436 - DEBUG - Joint score for alpha[0]: 16.9101
+2025-08-08 19:49:12,126 - DEBUG - Joint score for alpha[1]: 16.5980
+2025-08-08 19:49:17,808 - DEBUG - Joint score for alpha[2]: 17.0769
+2025-08-08 19:49:23,507 - DEBUG - Joint score for alpha[3]: 16.8877
+2025-08-08 19:49:29,192 - DEBUG - Joint score for alpha[4]: 16.3552
+2025-08-08 19:49:34,877 - DEBUG - Joint score for alpha[5]: 16.3622
+2025-08-08 19:49:40,560 - DEBUG - Joint score for alpha[6]: 16.6549
+2025-08-08 19:49:46,241 - DEBUG - Joint score for alpha[7]: 17.3032
+2025-08-08 19:49:51,925 - DEBUG - Joint score for alpha[8]: 17.6284
+2025-08-08 19:49:57,609 - DEBUG - Joint score for alpha[9]: 17.2085
+2025-08-08 19:50:03,297 - DEBUG - Joint score for alpha[10]: 16.5521
+2025-08-08 19:50:08,984 - DEBUG - Joint score for alpha[11]: 17.1442
+2025-08-08 19:50:14,666 - DEBUG - Joint score for alpha[12]: 17.5015
+2025-08-08 19:50:20,357 - DEBUG - Joint score for alpha[13]: 17.3875
+2025-08-08 19:50:26,041 - DEBUG - Joint score for alpha[14]: 17.2668
+2025-08-08 19:50:31,724 - DEBUG - Joint score for alpha[15]: 16.2992
+
+ 80%|████████  | 4/5 [06:06<01:31, 91.46s/it][A2025-08-08 19:50:37,661 - DEBUG - Joint score for alpha[0]: 16.6629
+2025-08-08 19:50:43,349 - DEBUG - Joint score for alpha[1]: 16.2976
+2025-08-08 19:50:49,034 - DEBUG - Joint score for alpha[2]: 16.0362
+2025-08-08 19:50:54,718 - DEBUG - Joint score for alpha[3]: 15.8409
+2025-08-08 19:51:00,407 - DEBUG - Joint score for alpha[4]: 16.2367
+2025-08-08 19:51:06,092 - DEBUG - Joint score for alpha[5]: 15.5861
+2025-08-08 19:51:11,785 - DEBUG - Joint score for alpha[6]: 15.6983
+2025-08-08 19:51:17,470 - DEBUG - Joint score for alpha[7]: 15.8388
+2025-08-08 19:51:23,150 - DEBUG - Joint score for alpha[8]: 15.7334
+2025-08-08 19:51:28,834 - DEBUG - Joint score for alpha[9]: 16.0169
+2025-08-08 19:51:34,518 - DEBUG - Joint score for alpha[10]: 16.0355
+2025-08-08 19:51:40,202 - DEBUG - Joint score for alpha[11]: 15.8835
+2025-08-08 19:51:45,884 - DEBUG - Joint score for alpha[12]: 16.1518
+2025-08-08 19:51:51,609 - DEBUG - Joint score for alpha[13]: 16.8880
+2025-08-08 19:51:57,295 - DEBUG - Joint score for alpha[14]: 16.4635
+2025-08-08 19:52:02,980 - DEBUG - Joint score for alpha[15]: 16.8608
+
+100%|██████████| 5/5 [07:38<00:00, 91.39s/it][A
+                                             [A2025-08-08 19:52:03,023 - INFO - Step 1/128: mean ENERGY=18.3728
+Gibbs Steps:   1%|          | 1/128 [07:48<16:31:26, 468.40s/it]2025-08-08 19:52:03,046 - DEBUG - Beginning Gibbs iteration s = 1
+
+  0%|          | 0/5 [00:00<?, ?it/s][A2025-08-08 19:52:32,524 - DEBUG - Joint score for alpha[0]: 17.1670
+2025-08-08 19:52:38,214 - DEBUG - Joint score for alpha[1]: 15.7091
+2025-08-08 19:52:43,899 - DEBUG - Joint score for alpha[2]: 16.8620
+2025-08-08 19:52:49,583 - DEBUG - Joint score for alpha[3]: 16.9926
+2025-08-08 19:52:55,269 - DEBUG - Joint score for alpha[4]: 15.6852
+2025-08-08 19:53:00,958 - DEBUG - Joint score for alpha[5]: 15.6648
+2025-08-08 19:53:06,643 - DEBUG - Joint score for alpha[6]: 17.2863
+2025-08-08 19:53:12,332 - DEBUG - Joint score for alpha[7]: 15.6234
+2025-08-08 19:53:18,019 - DEBUG - Joint score for alpha[8]: 15.9010
+2025-08-08 19:53:23,707 - DEBUG - Joint score for alpha[9]: 16.8780
+2025-08-08 19:53:29,398 - DEBUG - Joint score for alpha[10]: 18.3409
+2025-08-08 19:53:35,089 - DEBUG - Joint score for alpha[11]: 15.6413
+2025-08-08 19:53:40,778 - DEBUG - Joint score for alpha[12]: 15.9472
+2025-08-08 19:53:46,482 - DEBUG - Joint score for alpha[13]: 15.6222
+2025-08-08 19:53:52,173 - DEBUG - Joint score for alpha[14]: 17.7812
+2025-08-08 19:53:57,865 - DEBUG - Joint score for alpha[15]: 19.3816
+
+ 20%|██        | 1/5 [01:31<06:04, 91.03s/it][A2025-08-08 19:54:03,798 - DEBUG - Joint score for alpha[0]: 15.6535
+2025-08-08 19:54:09,492 - DEBUG - Joint score for alpha[1]: 15.6080
+2025-08-08 19:54:15,183 - DEBUG - Joint score for alpha[2]: 15.9153
+2025-08-08 19:54:20,870 - DEBUG - Joint score for alpha[3]: 15.8658
+2025-08-08 19:54:26,560 - DEBUG - Joint score for alpha[4]: 15.6907
+2025-08-08 19:54:32,252 - DEBUG - Joint score for alpha[5]: 16.7927
+2025-08-08 19:54:37,952 - DEBUG - Joint score for alpha[6]: 15.7680
+2025-08-08 19:54:43,649 - DEBUG - Joint score for alpha[7]: 15.7271
+2025-08-08 19:54:49,343 - DEBUG - Joint score for alpha[8]: 15.8004
+2025-08-08 19:54:55,033 - DEBUG - Joint score for alpha[9]: 15.5868
+2025-08-08 19:55:00,722 - DEBUG - Joint score for alpha[10]: 15.6773
+2025-08-08 19:55:06,413 - DEBUG - Joint score for alpha[11]: 15.7274
+2025-08-08 19:55:12,103 - DEBUG - Joint score for alpha[12]: 15.9820
+2025-08-08 19:55:17,794 - DEBUG - Joint score for alpha[13]: 15.6246
+2025-08-08 19:55:23,477 - DEBUG - Joint score for alpha[14]: 15.8686
+2025-08-08 19:55:29,168 - DEBUG - Joint score for alpha[15]: 15.7752
+
+ 40%|████      | 2/5 [03:02<04:33, 91.19s/it][A2025-08-08 19:55:34,997 - DEBUG - Joint score for alpha[0]: 15.7813
+2025-08-08 19:55:40,727 - DEBUG - Joint score for alpha[1]: 15.6691
+2025-08-08 19:55:46,416 - DEBUG - Joint score for alpha[2]: 17.4415
+2025-08-08 19:55:52,100 - DEBUG - Joint score for alpha[3]: 16.0152
+2025-08-08 19:55:57,791 - DEBUG - Joint score for alpha[4]: 15.6393
+2025-08-08 19:56:03,480 - DEBUG - Joint score for alpha[5]: 15.7120
+2025-08-08 19:56:09,169 - DEBUG - Joint score for alpha[6]: 15.6543
+2025-08-08 19:56:14,908 - DEBUG - Joint score for alpha[7]: 15.5463
+2025-08-08 19:56:20,602 - DEBUG - Joint score for alpha[8]: 15.6668
+2025-08-08 19:56:26,294 - DEBUG - Joint score for alpha[9]: 15.4863
+2025-08-08 19:56:31,988 - DEBUG - Joint score for alpha[10]: 15.8873
+2025-08-08 19:56:37,680 - DEBUG - Joint score for alpha[11]: 15.5673
+2025-08-08 19:56:43,380 - DEBUG - Joint score for alpha[12]: 16.5706
+2025-08-08 19:56:49,103 - DEBUG - Joint score for alpha[13]: 15.5480
+2025-08-08 19:56:54,802 - DEBUG - Joint score for alpha[14]: 15.5972
+2025-08-08 19:57:00,503 - DEBUG - Joint score for alpha[15]: 15.6161
+
+ 60%|██████    | 3/5 [04:33<03:02, 91.26s/it][A2025-08-08 19:57:06,446 - DEBUG - Joint score for alpha[0]: 16.0160
+2025-08-08 19:57:12,135 - DEBUG - Joint score for alpha[1]: 15.8885
+2025-08-08 19:57:17,821 - DEBUG - Joint score for alpha[2]: 16.6437
+2025-08-08 19:57:23,509 - DEBUG - Joint score for alpha[3]: 15.6696
+2025-08-08 19:57:29,201 - DEBUG - Joint score for alpha[4]: 15.5985
+2025-08-08 19:57:34,887 - DEBUG - Joint score for alpha[5]: 15.9450
+2025-08-08 19:57:40,576 - DEBUG - Joint score for alpha[6]: 15.7751
+2025-08-08 19:57:46,268 - DEBUG - Joint score for alpha[7]: 15.9371
+2025-08-08 19:57:51,962 - DEBUG - Joint score for alpha[8]: 15.6842
+2025-08-08 19:57:57,654 - DEBUG - Joint score for alpha[9]: 15.5508
+2025-08-08 19:58:03,344 - DEBUG - Joint score for alpha[10]: 15.7147
+2025-08-08 19:58:09,034 - DEBUG - Joint score for alpha[11]: 15.5613
+2025-08-08 19:58:14,721 - DEBUG - Joint score for alpha[12]: 15.7630
+2025-08-08 19:58:20,413 - DEBUG - Joint score for alpha[13]: 16.2461
+2025-08-08 19:58:26,101 - DEBUG - Joint score for alpha[14]: 16.1279
+2025-08-08 19:58:31,803 - DEBUG - Joint score for alpha[15]: 15.9902
+
+ 80%|████████  | 4/5 [06:04<01:31, 91.27s/it][A2025-08-08 19:58:37,721 - DEBUG - Joint score for alpha[0]: 15.8954
+2025-08-08 19:58:43,416 - DEBUG - Joint score for alpha[1]: 16.2414
+2025-08-08 19:58:49,102 - DEBUG - Joint score for alpha[2]: 15.9150
+2025-08-08 19:58:54,793 - DEBUG - Joint score for alpha[3]: 16.4538
+2025-08-08 19:59:00,484 - DEBUG - Joint score for alpha[4]: 15.8445
+2025-08-08 19:59:06,174 - DEBUG - Joint score for alpha[5]: 15.9444
+2025-08-08 19:59:11,860 - DEBUG - Joint score for alpha[6]: 15.9494
+2025-08-08 19:59:17,546 - DEBUG - Joint score for alpha[7]: 16.2709
+2025-08-08 19:59:23,234 - DEBUG - Joint score for alpha[8]: 16.2303
+2025-08-08 19:59:28,925 - DEBUG - Joint score for alpha[9]: 15.9161
+2025-08-08 19:59:34,611 - DEBUG - Joint score for alpha[10]: 17.3549
+2025-08-08 19:59:40,300 - DEBUG - Joint score for alpha[11]: 15.8713
+2025-08-08 19:59:45,984 - DEBUG - Joint score for alpha[12]: 16.1301
+2025-08-08 19:59:51,672 - DEBUG - Joint score for alpha[13]: 15.7548
+2025-08-08 19:59:57,406 - DEBUG - Joint score for alpha[14]: 15.8032
+2025-08-08 20:00:03,115 - DEBUG - Joint score for alpha[15]: 15.8325
+
+100%|██████████| 5/5 [07:36<00:00, 91.29s/it][A
+                                             [A2025-08-08 20:00:03,158 - INFO - Step 2/128: mean ENERGY=15.6002
+Gibbs Steps:   2%|▏         | 2/128 [15:48<16:38:06, 475.29s/it]2025-08-08 20:00:03,162 - DEBUG - Beginning Gibbs iteration s = 2
+
+  0%|          | 0/5 [00:00<?, ?it/s][A2025-08-08 20:00:30,608 - DEBUG - Joint score for alpha[0]: 15.6715
+2025-08-08 20:00:36,299 - DEBUG - Joint score for alpha[1]: 17.9500
+2025-08-08 20:00:41,982 - DEBUG - Joint score for alpha[2]: 21.6669
+2025-08-08 20:00:47,668 - DEBUG - Joint score for alpha[3]: 18.2703
+2025-08-08 20:00:53,356 - DEBUG - Joint score for alpha[4]: 15.6741
+2025-08-08 20:00:59,042 - DEBUG - Joint score for alpha[5]: 16.1624
+2025-08-08 20:01:04,730 - DEBUG - Joint score for alpha[6]: 15.9275
+2025-08-08 20:01:10,420 - DEBUG - Joint score for alpha[7]: 17.0657
+2025-08-08 20:01:16,112 - DEBUG - Joint score for alpha[8]: 20.2031
+2025-08-08 20:01:21,803 - DEBUG - Joint score for alpha[9]: 15.6783
+2025-08-08 20:01:27,494 - DEBUG - Joint score for alpha[10]: 15.6139
+2025-08-08 20:01:33,184 - DEBUG - Joint score for alpha[11]: 15.9850
+2025-08-08 20:01:38,875 - DEBUG - Joint score for alpha[12]: 16.1842
+2025-08-08 20:01:44,569 - DEBUG - Joint score for alpha[13]: 15.5603
+2025-08-08 20:01:50,273 - DEBUG - Joint score for alpha[14]: 17.9625
+2025-08-08 20:01:55,962 - DEBUG - Joint score for alpha[15]: 17.6093
+
+ 20%|██        | 1/5 [01:31<06:04, 91.04s/it][A2025-08-08 20:02:01,786 - DEBUG - Joint score for alpha[0]: 15.5719
+2025-08-08 20:02:07,518 - DEBUG - Joint score for alpha[1]: 15.6776
+2025-08-08 20:02:13,248 - DEBUG - Joint score for alpha[2]: 15.7469
+2025-08-08 20:02:18,934 - DEBUG - Joint score for alpha[3]: 15.6462
+2025-08-08 20:02:24,641 - DEBUG - Joint score for alpha[4]: 15.7577
+2025-08-08 20:02:30,339 - DEBUG - Joint score for alpha[5]: 15.7843
+2025-08-08 20:02:36,029 - DEBUG - Joint score for alpha[6]: 16.5473
+2025-08-08 20:02:41,716 - DEBUG - Joint score for alpha[7]: 15.6772
+2025-08-08 20:02:47,404 - DEBUG - Joint score for alpha[8]: 15.6035
+2025-08-08 20:02:53,090 - DEBUG - Joint score for alpha[9]: 15.7365
+2025-08-08 20:02:58,780 - DEBUG - Joint score for alpha[10]: 15.5468
+2025-08-08 20:03:04,471 - DEBUG - Joint score for alpha[11]: 15.8809
+2025-08-08 20:03:10,159 - DEBUG - Joint score for alpha[12]: 15.8738
+2025-08-08 20:03:15,846 - DEBUG - Joint score for alpha[13]: 15.6397
+2025-08-08 20:03:21,548 - DEBUG - Joint score for alpha[14]: 15.7684
+2025-08-08 20:03:27,252 - DEBUG - Joint score for alpha[15]: 15.6113
+
+ 40%|████      | 2/5 [03:02<04:33, 91.19s/it][A2025-08-08 20:03:33,077 - DEBUG - Joint score for alpha[0]: 15.5628
+2025-08-08 20:03:38,772 - DEBUG - Joint score for alpha[1]: 15.8265
+2025-08-08 20:03:44,461 - DEBUG - Joint score for alpha[2]: 15.5642
+2025-08-08 20:03:50,157 - DEBUG - Joint score for alpha[3]: 15.7667
+2025-08-08 20:03:55,844 - DEBUG - Joint score for alpha[4]: 15.7552
+2025-08-08 20:04:01,530 - DEBUG - Joint score for alpha[5]: 15.6549
+2025-08-08 20:04:07,223 - DEBUG - Joint score for alpha[6]: 15.7484
+2025-08-08 20:04:12,922 - DEBUG - Joint score for alpha[7]: 15.7447
+2025-08-08 20:04:18,609 - DEBUG - Joint score for alpha[8]: 15.7503
+2025-08-08 20:04:24,301 - DEBUG - Joint score for alpha[9]: 15.5702
+2025-08-08 20:04:29,992 - DEBUG - Joint score for alpha[10]: 15.7138
+2025-08-08 20:04:35,678 - DEBUG - Joint score for alpha[11]: 15.6526
+2025-08-08 20:04:41,369 - DEBUG - Joint score for alpha[12]: 15.6842
+2025-08-08 20:04:47,060 - DEBUG - Joint score for alpha[13]: 15.7003
+2025-08-08 20:04:52,753 - DEBUG - Joint score for alpha[14]: 15.8639
+2025-08-08 20:04:58,446 - DEBUG - Joint score for alpha[15]: 15.7876
+
+ 60%|██████    | 3/5 [04:33<03:02, 91.19s/it][A2025-08-08 20:05:04,270 - DEBUG - Joint score for alpha[0]: 15.7688
+2025-08-08 20:05:09,999 - DEBUG - Joint score for alpha[1]: 15.7684
+2025-08-08 20:05:15,702 - DEBUG - Joint score for alpha[2]: 15.8005
+2025-08-08 20:05:21,394 - DEBUG - Joint score for alpha[3]: 15.8803
+2025-08-08 20:05:27,080 - DEBUG - Joint score for alpha[4]: 15.7673
+2025-08-08 20:05:32,773 - DEBUG - Joint score for alpha[5]: 15.8476
+2025-08-08 20:05:38,460 - DEBUG - Joint score for alpha[6]: 15.6878
+2025-08-08 20:05:44,147 - DEBUG - Joint score for alpha[7]: 15.6418
+2025-08-08 20:05:49,839 - DEBUG - Joint score for alpha[8]: 15.9366
+2025-08-08 20:05:55,526 - DEBUG - Joint score for alpha[9]: 15.6416
+2025-08-08 20:06:01,219 - DEBUG - Joint score for alpha[10]: 15.6376
+2025-08-08 20:06:06,921 - DEBUG - Joint score for alpha[11]: 15.5446
+2025-08-08 20:06:12,646 - DEBUG - Joint score for alpha[12]: 16.7630
+2025-08-08 20:06:18,340 - DEBUG - Joint score for alpha[13]: 15.6015
+2025-08-08 20:06:24,027 - DEBUG - Joint score for alpha[14]: 15.8472
+2025-08-08 20:06:29,720 - DEBUG - Joint score for alpha[15]: 15.6597
+
+ 80%|████████  | 4/5 [06:04<01:31, 91.22s/it][A2025-08-08 20:06:35,646 - DEBUG - Joint score for alpha[0]: 16.0368
+2025-08-08 20:06:41,337 - DEBUG - Joint score for alpha[1]: 15.6942
+2025-08-08 20:06:47,029 - DEBUG - Joint score for alpha[2]: 15.8692
+2025-08-08 20:06:52,717 - DEBUG - Joint score for alpha[3]: 15.6772
+2025-08-08 20:06:58,418 - DEBUG - Joint score for alpha[4]: 15.8155
+2025-08-08 20:07:04,114 - DEBUG - Joint score for alpha[5]: 16.0189
+2025-08-08 20:07:09,803 - DEBUG - Joint score for alpha[6]: 17.5014
+2025-08-08 20:07:15,496 - DEBUG - Joint score for alpha[7]: 16.2537
+2025-08-08 20:07:21,186 - DEBUG - Joint score for alpha[8]: 15.6900
+2025-08-08 20:07:26,882 - DEBUG - Joint score for alpha[9]: 15.7693
+2025-08-08 20:07:32,572 - DEBUG - Joint score for alpha[10]: 16.4395
+2025-08-08 20:07:38,271 - DEBUG - Joint score for alpha[11]: 15.7969
+2025-08-08 20:07:43,965 - DEBUG - Joint score for alpha[12]: 15.9190
+2025-08-08 20:07:49,660 - DEBUG - Joint score for alpha[13]: 18.2636
+2025-08-08 20:07:55,350 - DEBUG - Joint score for alpha[14]: 15.9731
+2025-08-08 20:08:01,043 - DEBUG - Joint score for alpha[15]: 15.6827
+
+100%|██████████| 5/5 [07:36<00:00, 91.26s/it][A
+                                             [A2025-08-08 20:08:01,086 - INFO - Step 3/128: mean ENERGY=15.5783
+Gibbs Steps:   2%|▏         | 3/128 [23:46<16:32:41, 476.50s/it]2025-08-08 20:08:01,091 - DEBUG - Beginning Gibbs iteration s = 3
+
+  0%|          | 0/5 [00:00<?, ?it/s][A2025-08-08 20:08:32,167 - DEBUG - Joint score for alpha[0]: 15.7422
+2025-08-08 20:08:37,855 - DEBUG - Joint score for alpha[1]: 15.9994
+2025-08-08 20:08:43,541 - DEBUG - Joint score for alpha[2]: 16.0732
+2025-08-08 20:08:49,225 - DEBUG - Joint score for alpha[3]: 17.0526
+2025-08-08 20:08:54,924 - DEBUG - Joint score for alpha[4]: 16.8115
+2025-08-08 20:09:00,611 - DEBUG - Joint score for alpha[5]: 16.0071
+2025-08-08 20:09:06,302 - DEBUG - Joint score for alpha[6]: 15.8614
+2025-08-08 20:09:12,033 - DEBUG - Joint score for alpha[7]: 17.2906
+2025-08-08 20:09:17,720 - DEBUG - Joint score for alpha[8]: 15.9400
+2025-08-08 20:09:23,409 - DEBUG - Joint score for alpha[9]: 16.0158
+2025-08-08 20:09:29,099 - DEBUG - Joint score for alpha[10]: 15.8021
+2025-08-08 20:09:34,792 - DEBUG - Joint score for alpha[11]: 15.8651
+2025-08-08 20:09:40,479 - DEBUG - Joint score for alpha[12]: 15.7849
+2025-08-08 20:09:46,172 - DEBUG - Joint score for alpha[13]: 17.4471
+2025-08-08 20:09:51,875 - DEBUG - Joint score for alpha[14]: 15.9454
+2025-08-08 20:09:57,568 - DEBUG - Joint score for alpha[15]: 16.0581
+
+ 20%|██        | 1/5 [01:31<06:04, 91.09s/it][A2025-08-08 20:10:03,502 - DEBUG - Joint score for alpha[0]: 15.7795
+2025-08-08 20:10:09,194 - DEBUG - Joint score for alpha[1]: 15.8194
+2025-08-08 20:10:14,883 - DEBUG - Joint score for alpha[2]: 15.9341
+2025-08-08 20:10:20,578 - DEBUG - Joint score for alpha[3]: 15.8125
+2025-08-08 20:10:26,264 - DEBUG - Joint score for alpha[4]: 15.9203
+2025-08-08 20:10:31,951 - DEBUG - Joint score for alpha[5]: 15.8252
+2025-08-08 20:10:37,638 - DEBUG - Joint score for alpha[6]: 15.8458
+2025-08-08 20:10:43,326 - DEBUG - Joint score for alpha[7]: 15.9331
+2025-08-08 20:10:49,014 - DEBUG - Joint score for alpha[8]: 15.7276
+2025-08-08 20:10:54,702 - DEBUG - Joint score for alpha[9]: 15.8387
+2025-08-08 20:11:00,385 - DEBUG - Joint score for alpha[10]: 15.9379
+2025-08-08 20:11:06,072 - DEBUG - Joint score for alpha[11]: 15.9537
+2025-08-08 20:11:11,758 - DEBUG - Joint score for alpha[12]: 15.7667
+2025-08-08 20:11:17,439 - DEBUG - Joint score for alpha[13]: 16.0985
+2025-08-08 20:11:23,125 - DEBUG - Joint score for alpha[14]: 15.7146
+2025-08-08 20:11:28,809 - DEBUG - Joint score for alpha[15]: 15.8804
+
+ 40%|████      | 2/5 [03:02<04:33, 91.18s/it][A2025-08-08 20:11:34,631 - DEBUG - Joint score for alpha[0]: 15.7166
+2025-08-08 20:11:40,330 - DEBUG - Joint score for alpha[1]: 15.9309
+2025-08-08 20:11:46,056 - DEBUG - Joint score for alpha[2]: 15.8039
+2025-08-08 20:11:51,745 - DEBUG - Joint score for alpha[3]: 15.9342
+2025-08-08 20:11:57,433 - DEBUG - Joint score for alpha[4]: 15.9291
+2025-08-08 20:12:03,124 - DEBUG - Joint score for alpha[5]: 15.9441
+2025-08-08 20:12:08,853 - DEBUG - Joint score for alpha[6]: 15.8042
+2025-08-08 20:12:14,541 - DEBUG - Joint score for alpha[7]: 15.7379
+2025-08-08 20:12:20,230 - DEBUG - Joint score for alpha[8]: 15.9286
+2025-08-08 20:12:25,917 - DEBUG - Joint score for alpha[9]: 16.4597
+2025-08-08 20:12:31,601 - DEBUG - Joint score for alpha[10]: 15.9189
+2025-08-08 20:12:37,289 - DEBUG - Joint score for alpha[11]: 15.9360
+2025-08-08 20:12:42,978 - DEBUG - Joint score for alpha[12]: 15.7987
+2025-08-08 20:12:48,665 - DEBUG - Joint score for alpha[13]: 15.8614
+2025-08-08 20:12:54,348 - DEBUG - Joint score for alpha[14]: 15.7644
+2025-08-08 20:13:00,032 - DEBUG - Joint score for alpha[15]: 15.9613
+
+ 60%|██████    | 3/5 [04:33<03:02, 91.20s/it][A2025-08-08 20:13:05,977 - DEBUG - Joint score for alpha[0]: 16.5695
+2025-08-08 20:13:11,674 - DEBUG - Joint score for alpha[1]: 16.4350
+2025-08-08 20:13:17,364 - DEBUG - Joint score for alpha[2]: 16.2191
+2025-08-08 20:13:23,048 - DEBUG - Joint score for alpha[3]: 16.1905
+2025-08-08 20:13:28,750 - DEBUG - Joint score for alpha[4]: 16.1896
+2025-08-08 20:13:34,432 - DEBUG - Joint score for alpha[5]: 15.9393
+2025-08-08 20:13:40,130 - DEBUG - Joint score for alpha[6]: 15.9959
+2025-08-08 20:13:45,817 - DEBUG - Joint score for alpha[7]: 16.5930
+2025-08-08 20:13:51,503 - DEBUG - Joint score for alpha[8]: 16.6692
+2025-08-08 20:13:57,192 - DEBUG - Joint score for alpha[9]: 16.5693
+2025-08-08 20:14:02,879 - DEBUG - Joint score for alpha[10]: 15.9802
+2025-08-08 20:14:08,566 - DEBUG - Joint score for alpha[11]: 16.6625
+2025-08-08 20:14:14,254 - DEBUG - Joint score for alpha[12]: 15.8317
+2025-08-08 20:14:19,946 - DEBUG - Joint score for alpha[13]: 15.8201
+2025-08-08 20:14:25,634 - DEBUG - Joint score for alpha[14]: 16.4413
+2025-08-08 20:14:31,320 - DEBUG - Joint score for alpha[15]: 16.5911
+
+ 80%|████████  | 4/5 [06:04<01:31, 91.23s/it][A2025-08-08 20:14:37,145 - DEBUG - Joint score for alpha[0]: 15.7669
+2025-08-08 20:14:42,837 - DEBUG - Joint score for alpha[1]: 15.9477
+2025-08-08 20:14:48,524 - DEBUG - Joint score for alpha[2]: 15.7834
+2025-08-08 20:14:54,214 - DEBUG - Joint score for alpha[3]: 16.0273
+2025-08-08 20:14:59,902 - DEBUG - Joint score for alpha[4]: 15.8494
+2025-08-08 20:15:05,594 - DEBUG - Joint score for alpha[5]: 15.9469
+2025-08-08 20:15:11,290 - DEBUG - Joint score for alpha[6]: 15.9202
+2025-08-08 20:15:16,980 - DEBUG - Joint score for alpha[7]: 15.8143
+2025-08-08 20:15:22,671 - DEBUG - Joint score for alpha[8]: 15.7164
+2025-08-08 20:15:28,363 - DEBUG - Joint score for alpha[9]: 16.0261
+2025-08-08 20:15:34,051 - DEBUG - Joint score for alpha[10]: 15.8968
+2025-08-08 20:15:39,741 - DEBUG - Joint score for alpha[11]: 15.9516
+2025-08-08 20:15:45,429 - DEBUG - Joint score for alpha[12]: 15.6731
+2025-08-08 20:15:51,118 - DEBUG - Joint score for alpha[13]: 15.9108
+2025-08-08 20:15:56,818 - DEBUG - Joint score for alpha[14]: 16.0953
+2025-08-08 20:16:02,507 - DEBUG - Joint score for alpha[15]: 15.9129
+
+100%|██████████| 5/5 [07:36<00:00, 91.22s/it][A
+                                             [A2025-08-08 20:16:02,549 - INFO - Step 4/128: mean ENERGY=15.7333
+Gibbs Steps:   3%|▎         | 4/128 [31:47<16:28:48, 478.46s/it]2025-08-08 20:16:02,552 - DEBUG - Beginning Gibbs iteration s = 4
+
+  0%|          | 0/5 [00:00<?, ?it/s][A2025-08-08 20:16:14,842 - DEBUG - Joint score for alpha[0]: 15.7434
+2025-08-08 20:16:20,536 - DEBUG - Joint score for alpha[1]: 16.6227
+2025-08-08 20:16:26,226 - DEBUG - Joint score for alpha[2]: 18.1404
+2025-08-08 20:16:31,915 - DEBUG - Joint score for alpha[3]: 15.7662
+2025-08-08 20:16:37,607 - DEBUG - Joint score for alpha[4]: 15.7018
+2025-08-08 20:16:43,293 - DEBUG - Joint score for alpha[5]: 17.4558
+2025-08-08 20:16:48,982 - DEBUG - Joint score for alpha[6]: 15.9252
+2025-08-08 20:16:54,673 - DEBUG - Joint score for alpha[7]: 15.9263
+2025-08-08 20:17:00,363 - DEBUG - Joint score for alpha[8]: 15.5890
+2025-08-08 20:17:06,056 - DEBUG - Joint score for alpha[9]: 15.8423
+2025-08-08 20:17:11,744 - DEBUG - Joint score for alpha[10]: 18.7629
+2025-08-08 20:17:17,438 - DEBUG - Joint score for alpha[11]: 15.8161
+2025-08-08 20:17:23,132 - DEBUG - Joint score for alpha[12]: 16.5492
+2025-08-08 20:17:28,826 - DEBUG - Joint score for alpha[13]: 15.5801
+2025-08-08 20:17:34,523 - DEBUG - Joint score for alpha[14]: 15.5254
+2025-08-08 20:17:40,217 - DEBUG - Joint score for alpha[15]: 16.2932
+
+ 20%|██        | 1/5 [01:31<06:04, 91.07s/it][A2025-08-08 20:17:46,165 - DEBUG - Joint score for alpha[0]: 15.5532
+2025-08-08 20:17:51,892 - DEBUG - Joint score for alpha[1]: 15.7052
+2025-08-08 20:17:57,581 - DEBUG - Joint score for alpha[2]: 15.9389
+2025-08-08 20:18:03,271 - DEBUG - Joint score for alpha[3]: 16.0200
+2025-08-08 20:18:08,962 - DEBUG - Joint score for alpha[4]: 15.7058
+2025-08-08 20:18:14,650 - DEBUG - Joint score for alpha[5]: 15.7585
+2025-08-08 20:18:20,379 - DEBUG - Joint score for alpha[6]: 15.9261
+2025-08-08 20:18:26,065 - DEBUG - Joint score for alpha[7]: 15.7407
+2025-08-08 20:18:31,751 - DEBUG - Joint score for alpha[8]: 15.6912
+2025-08-08 20:18:37,452 - DEBUG - Joint score for alpha[9]: 15.7552
+2025-08-08 20:18:43,150 - DEBUG - Joint score for alpha[10]: 15.6551
+2025-08-08 20:18:48,838 - DEBUG - Joint score for alpha[11]: 15.7977
+2025-08-08 20:18:54,524 - DEBUG - Joint score for alpha[12]: 15.7143
+2025-08-08 20:19:00,206 - DEBUG - Joint score for alpha[13]: 15.6527
+2025-08-08 20:19:05,892 - DEBUG - Joint score for alpha[14]: 15.6994
+2025-08-08 20:19:11,577 - DEBUG - Joint score for alpha[15]: 15.9621
+
+ 40%|████      | 2/5 [03:02<04:33, 91.24s/it][A2025-08-08 20:19:17,521 - DEBUG - Joint score for alpha[0]: 15.6421
+2025-08-08 20:19:23,225 - DEBUG - Joint score for alpha[1]: 15.7060
+2025-08-08 20:19:28,918 - DEBUG - Joint score for alpha[2]: 15.9751
+2025-08-08 20:19:34,609 - DEBUG - Joint score for alpha[3]: 15.8949
+2025-08-08 20:19:40,295 - DEBUG - Joint score for alpha[4]: 15.8890
+2025-08-08 20:19:45,983 - DEBUG - Joint score for alpha[5]: 15.8141
+2025-08-08 20:19:51,679 - DEBUG - Joint score for alpha[6]: 15.6655
+2025-08-08 20:19:57,368 - DEBUG - Joint score for alpha[7]: 15.8093
+2025-08-08 20:20:03,058 - DEBUG - Joint score for alpha[8]: 15.4886

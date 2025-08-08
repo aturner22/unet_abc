@@ -1,0 +1,85 @@
+{
+  "name": "gibbs_abc_crps",
+  "description": "Production run of crps",
+
+  "sample_size": 128,
+  "ensemble_size": 64,
+  "n_gibbs_steps": 128,
+  "n_proposals_per_variable": 16,
+  "proposal_scale": 0.1,
+  "temporal_resampling": true,
+  "score_function": "crps",
+
+  "inference_mode": "conditional_gibbs",
+  "abc_epsilon": 0.02, 
+  "adaptive_epsilon": true,
+  "min_epsilon": 0.01,
+  "epsilon_quantile": 0.3,
+  
+  "n_universe_samples": 350640,
+
+  "abc_params": {
+    "initial_alpha_range": [0.05, 1],
+    "min_alpha": 1e-4,
+    "adapt_every": 5,
+    "adapt_factor": 0.85,
+    "adapt_stop": 30,
+    "eps_energy": 1e-6,
+    "checkpoint_file": "gibbs_checkpoint_step.npz"
+  },
+
+  "scoring_params": {
+    "ensemble_threshold_exact": 10, 
+    "sampling_approximation_size": 100
+  },
+
+  "memory_management": {
+    "max_retries": 5,
+    "retry_at_batch_one_threshold": 3,
+    "memory_pressure_threshold": 0.85,
+    "safety_margins": {
+      "cpu_low_memory": 0.8,
+      "cpu_medium_memory": 0.65,
+      "cpu_high_memory": 0.5,
+      "gpu_low_memory": 0.9,
+      "gpu_medium_memory": 0.8,
+      "gpu_high_memory": 0.7
+    },
+    "utilization_ratios": {
+      "cpu_free_memory_ratio": 0.3,
+      "gpu_free_memory_ratio": 0.6,
+      "cpu_min_batch_size": 8,
+      "gpu_min_batch_size": 16
+    },
+    "batch_reduction": {
+      "large_batch_threshold": 16,
+      "medium_batch_threshold": 4,
+      "large_reduction_factor": 4,
+      "medium_reduction_factor": 2,
+      "min_reduction_size": 4
+    },
+    "batch_size_limits": {
+      "memory_test_pairs": 500
+    },
+    "sample_memory_estimates": {
+      "cpu_mb_per_sample": 50,
+      "gpu_mb_per_sample": 100
+    }
+  },
+
+  "spacing": 2,
+  "t_max": 6,
+  "t_direct": 6,
+  "t_iter": 6,
+  "conditioning_times": [0, -6],
+  "n_ens": 1,
+
+  "variable_names": ["z500", "t850", "t2m", "u10", "v10"],
+  "num_static_fields": 2,
+  "max_horizon": 240,
+  "seed": 42,
+
+  "data_directory": "./data",
+  "model_directory": "./models",
+  "result_directory": "./results"
+}
