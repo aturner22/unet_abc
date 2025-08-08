@@ -1,6 +1,6 @@
 {
-  "name": "gibbs_abc_crps",
-  "description": "Production run of crps",
+  "name": "greedy_abc_energy",
+  "description": "Production run of greedy energy score abc",
 
   "sample_size": 128,
   "ensemble_size": 64,
@@ -8,9 +8,9 @@
   "n_proposals_per_variable": 16,
   "proposal_scale": 0.1,
   "temporal_resampling": true,
-  "score_function": "crps",
+  "score_function": "energy",
 
-  "inference_mode": "conditional_gibbs",
+  "inference_mode": "greedy",
   "abc_epsilon": 0.02, 
   "adaptive_epsilon": true,
   "min_epsilon": 0.01,
@@ -23,7 +23,7 @@
     "min_alpha": 1e-4,
     "adapt_every": 5,
     "adapt_factor": 0.85,
-    "adapt_stop": 30,
+    "adapt_stop": 65,
     "eps_energy": 1e-6,
     "checkpoint_file": "gibbs_checkpoint_step.npz"
   },

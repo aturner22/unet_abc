@@ -231,12 +231,6 @@ def run_gibbs_abc_rfp(
     score_function: str,
     logger: logging.Logger,
 ) -> dict:
-    """
-    Modes (config.inference_mode):
-      - "smc"         : SMC-ABC with RW-normal proposals, exponential prior, Gaussian score-kernel.
-      - "abc_gibbs"   : ABC-Gibbs using conditional-prior reference table + argmin inside ε-quantile.
-      - "greedy"      : Greedy optimiser (deterministic argmin) over RW-normal proposals.
-    """
 
     device = next(model.parameters()).device
     ref_full = torch.from_numpy(np.array(reference_mmap, copy=True)).to(device)
@@ -455,8 +449,8 @@ def run_gibbs_abc_rfp(
                 posterior_samples[s, v] = current_alpha[v]
                 posterior_scores[s, v] = joint_scores[sel_idx]
 
-            else:  # greedy
-                # --- Greedy optimiser: deterministic argmin over RW-normal proposals ---
+            else:
+                #Greedy optimiser: deterministic argmin over RW-normal proposals 
                 tol = float(getattr(config, "argmin_tolerance", 0.0))
                 m = np.min(joint_scores)
                 if tol > 0:
