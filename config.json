@@ -10,7 +10,7 @@
   "temporal_resampling": true,
   "score_function": "energy",
 
-  "inference_mode": "smc_gibbs",
+  "inference_mode": "conditional_gibbs",
   "abc_epsilon": 0.02, 
   "adaptive_epsilon": true,
   "min_epsilon": 0.01,
