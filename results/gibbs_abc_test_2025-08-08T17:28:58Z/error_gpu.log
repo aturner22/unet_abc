@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/rds/general/user/at1824/home/msc_project/main.py", line 17, in <module>
+    from core.algorithm import run_gibbs_abc_rfp
+  File "/rds/general/user/at1824/home/msc_project/core/algorithm.py", line 7, in <module>
+    import scipy.stats
+ModuleNotFoundError: No module named 'scipy'
