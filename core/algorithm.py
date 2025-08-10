@@ -6,6 +6,8 @@ from tqdm import tqdm
 from .scoring import get_scoring_function
 import scipy.stats
 from .batch_manager import MemorySafeBatchManager
+from .temporal_metadata import TemporalMetadata
+from typing import Optional
 
 
 def generate_joint_rfp(
@@ -35,6 +37,118 @@ def generate_joint_rfp(
     return perturb
 
 
+def generate_seasonal_joint_rfp(
+    reference_tensor: torch.Tensor,
+    alpha_matrix: torch.Tensor,
+    batch_size: int,
+    ensemble_size: int,
+    device: torch.device,
+    generator: torch.Generator,
+    eps_energy: float,
+    temporal_metadata: Optional[TemporalMetadata] = None,
+    base_temporal_indices: Optional[torch.Tensor] = None,
+    day_window: int = 30,
+    hour_tolerance: int = 0,
+    exclude_same_year: bool = True,
+    fallback_to_random: bool = True,
+) -> torch.Tensor:
+    """
+    Generate RFP using seasonal and diurnal constraints.
+    
+    Args:
+        reference_tensor: Full reference tensor [T, V, H, W]
+        alpha_matrix: Alpha parameters [P, V]  
+        batch_size: Number of samples in batch
+        ensemble_size: Size of ensemble
+        device: Computing device
+        generator: Random number generator
+        eps_energy: Energy regularization parameter
+        temporal_metadata: Temporal metadata for filtering
+        base_temporal_indices: Base time indices for each batch sample [batch_size]
+        day_window: ±days around base day of year (default: 30)
+        hour_tolerance: ±hours around base hour (default: 0 for exact)
+        exclude_same_year: Exclude candidates from same year as base
+        fallback_to_random: Fall back to random sampling if insufficient candidates
+        
+    Returns:
+        Perturbation tensor [P, batch_size, ensemble_size, V, H, W]
+    """
+    P = alpha_matrix.shape[0]
+    T, V = reference_tensor.shape[0], reference_tensor.shape[1]
+    
+    # If no temporal constraints provided, use original method
+    if temporal_metadata is None or base_temporal_indices is None:
+        return generate_joint_rfp(
+            reference_tensor, alpha_matrix, batch_size, ensemble_size,
+            device, generator, eps_energy
+        )
+    
+    # Initialize result tensors
+    idx1 = torch.zeros((batch_size, ensemble_size), dtype=torch.long, device=device)
+    idx2 = torch.zeros((batch_size, ensemble_size), dtype=torch.long, device=device)
+    
+    # Generate seasonally-constrained indices for each batch sample
+    for b in range(batch_size):
+        base_idx = int(base_temporal_indices[b].item())
+        
+        # Get seasonal/diurnal candidates
+        candidates = temporal_metadata.get_seasonal_diurnal_candidates(
+            base_idx=base_idx,
+            day_window=day_window,
+            hour_tolerance=hour_tolerance,
+            exclude_same_year=exclude_same_year
+        )
+        
+        # Check if we have sufficient candidates
+        min_candidates = ensemble_size * 2  # Need pairs for differences
+        if len(candidates) < min_candidates:
+            if fallback_to_random:
+                # Insufficient seasonal candidates - fall back to random sampling
+                idx1[b] = torch.randint(0, T, (ensemble_size,), device=device, generator=generator)
+                offset = torch.randint(1, T, (ensemble_size,), device=device, generator=generator)
+                idx2[b] = (idx1[b] + offset) % T
+            else:
+                # Use all available candidates, sampling with replacement if needed
+                candidates_tensor = torch.tensor(candidates, device=device, dtype=torch.long)
+                idx1[b] = candidates_tensor[torch.randint(
+                    0, len(candidates), (ensemble_size,), device=device, generator=generator
+                )]
+                idx2[b] = candidates_tensor[torch.randint(
+                    0, len(candidates), (ensemble_size,), device=device, generator=generator
+                )]
+        else:
+            # Sufficient candidates - sample pairs
+            candidates_tensor = torch.tensor(candidates, device=device, dtype=torch.long)
+            
+            # Sample first indices
+            idx1[b] = candidates_tensor[torch.randint(
+                0, len(candidates), (ensemble_size,), device=device, generator=generator
+            )]
+            
+            # Sample second indices (different from first)
+            for e in range(ensemble_size):
+                # Find candidates different from idx1[b, e]
+                different_candidates = candidates_tensor[candidates_tensor != idx1[b, e]]
+                if len(different_candidates) > 0:
+                    idx2[b, e] = different_candidates[torch.randint(
+                        0, len(different_candidates), (), device=device, generator=generator
+                    )]
+                else:
+                    # Fallback: use random offset if no different candidates
+                    offset = torch.randint(1, T, (), device=device, generator=generator)
+                    idx2[b, e] = (idx1[b, e] + offset) % T
+    
+    # Compute differences and normalize
+    diff = reference_tensor[idx1] - reference_tensor[idx2]
+    energy = torch.sqrt(
+        diff.pow(2).mean(dim=(2, 3, 4), keepdim=True) + eps_energy
+    )
+    diff_norm = diff / energy
+    perturb = alpha_matrix.reshape(P, 1, 1, V, 1, 1) * diff_norm.unsqueeze(0)
+    
+    return perturb
+
+
 def batched_forward_proposals(
     *,
     model: torch.nn.Module,
@@ -52,6 +166,9 @@ def batched_forward_proposals(
     config,
     logger: logging.Logger,
     eps_energy: float,
+    temporal_metadata: Optional[TemporalMetadata] = None,
+    base_temporal_indices: Optional[torch.Tensor] = None,
+    use_seasonal_rfp: bool = False,
 ) -> tuple[torch.Tensor, list[float]]:
     N, C, H, W = previous_fields.shape
     V = current_fields.shape[1]
@@ -61,15 +178,33 @@ def batched_forward_proposals(
     past_slice = previous_fields[:, V: 2 * V]
     static_slice = previous_fields[:, -2:]
 
-    perturb = generate_joint_rfp(
-        reference_tensor,
-        alpha_matrix,
-        batch_size=N,
-        ensemble_size=ensemble_size,
-        device=device,
-        generator=generator,
-        eps_energy=eps_energy,
-    )
+    # Generate perturbations using seasonal constraints if enabled
+    if use_seasonal_rfp and temporal_metadata is not None and base_temporal_indices is not None:
+        perturb = generate_seasonal_joint_rfp(
+            reference_tensor=reference_tensor,
+            alpha_matrix=alpha_matrix,
+            batch_size=N,
+            ensemble_size=ensemble_size,
+            device=device,
+            generator=generator,
+            eps_energy=eps_energy,
+            temporal_metadata=temporal_metadata,
+            base_temporal_indices=base_temporal_indices,
+            day_window=getattr(config, "seasonal_day_window", 30),
+            hour_tolerance=getattr(config, "seasonal_hour_tolerance", 0),
+            exclude_same_year=getattr(config, "seasonal_exclude_same_year", True),
+            fallback_to_random=getattr(config, "seasonal_fallback_to_random", True),
+        )
+    else:
+        perturb = generate_joint_rfp(
+            reference_tensor,
+            alpha_matrix,
+            batch_size=N,
+            ensemble_size=ensemble_size,
+            device=device,
+            generator=generator,
+            eps_energy=eps_energy,
+        )
 
     curr_base = current_slice.unsqueeze(1).expand(-1, ensemble_size, -1, -1, -1)
     past_base = past_slice.unsqueeze(1).expand(-1, ensemble_size, -1, -1, -1)
@@ -194,22 +329,79 @@ def resample_temporal_batches(
     if step_seed is not None:
         np.random.seed(step_seed)
 
-    subset_indices = np.random.choice(len(full_dataset), size=sample_size, replace=False)
+    oversample_factor = 2.0
+    initial_sample_size = min(int(sample_size * oversample_factor), len(full_dataset))
+    subset_indices = np.random.choice(len(full_dataset), size=initial_sample_size, replace=False)
     dataset = torch.utils.data.Subset(full_dataset, subset_indices)
     loader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False)
 
     batches = []
+    expected_shape = None
+    
     for previous_fields, current_fields, valid_time in loader:
         previous_fields = previous_fields.to(device)
         current_fields = current_fields.view(
             -1, num_variables, len(latitude), len(longitude)
         ).to(device)
+        
+        if expected_shape is None:
+            expected_shape = previous_fields.shape
+        elif previous_fields.shape != expected_shape:
+            continue
+            
         time_normalised = (
             torch.tensor([valid_time[0]], dtype=torch.float32, device=device) / max_horizon
         )
         batches.append((previous_fields, current_fields, time_normalised))
+        
+        if len(batches) >= sample_size:
+            break
 
-    return batches
+
+    if len(batches) < sample_size:
+        remaining_needed = sample_size - len(batches)
+        valid_indices = []
+        for i, idx in enumerate(subset_indices):
+            try:
+                sample = full_dataset[idx]
+                if expected_shape is None or sample[0].shape == expected_shape[1:]: 
+                    valid_indices.append(idx)
+            except:
+                continue
+                
+        if len(valid_indices) > 0:
+            additional_indices = np.random.choice(valid_indices, size=remaining_needed, replace=True)
+            additional_dataset = torch.utils.data.Subset(full_dataset, additional_indices)
+            additional_loader = torch.utils.data.DataLoader(additional_dataset, batch_size=1, shuffle=False)
+            
+            for previous_fields, current_fields, valid_time in additional_loader:
+                previous_fields = previous_fields.to(device)
+                current_fields = current_fields.view(
+                    -1, num_variables, len(latitude), len(longitude)
+                ).to(device)
+                time_normalised = (
+                    torch.tensor([valid_time[0]], dtype=torch.float32, device=device) / max_horizon
+                )
+                batches.append((previous_fields, current_fields, time_normalised))
+                
+                if len(batches) >= sample_size:
+                    break
+
+    return batches[:sample_size]
+
+
+def extract_temporal_indices_from_batches(
+    batches: list[tuple[torch.Tensor, torch.Tensor, torch.Tensor]],
+    max_horizon: int,
+    device: torch.device,
+) -> torch.Tensor:
+
+    temporal_indices = []
+    for _, _, time_norm in batches:
+        lead_time = int(time_norm.item() * max_horizon)
+        temporal_indices.append(lead_time)
+    
+    return torch.tensor(temporal_indices, device=device, dtype=torch.long)
 
 
 def run_gibbs_abc_rfp(
@@ -243,8 +435,18 @@ def run_gibbs_abc_rfp(
         "config.inference_mode must be one of {'smc_gibbs','conditional_gibbs','greedy'}"
     )
     logger.info(f"Inference mode: {inference_mode}")
+    
+    use_seasonal_rfp = getattr(config, "use_seasonal_rfp", False)
+    temporal_metadata = None
+    if use_seasonal_rfp:
+        temporal_metadata = TemporalMetadata()
+        logger.info("Seasonal RFP enabled with constraints:")
+        logger.info(f"  Day window: ±{getattr(config, 'seasonal_day_window', 30)} days")
+        logger.info(f"  Hour tolerance: ±{getattr(config, 'seasonal_hour_tolerance', 0)} hours")
+        logger.info(f"  Exclude same year: {getattr(config, 'seasonal_exclude_same_year', True)}")
+        logger.info(f"  Fallback to random: {getattr(config, 'seasonal_fallback_to_random', True)}")
 
-    # Data/batch materialisation
+    max_horizon_for_temporal = 240 
     if resample_temporal:
         if full_dataset is None or sample_size is None:
             raise ValueError("resample_temporal=True requires full_dataset and sample_size")
@@ -294,7 +496,6 @@ def run_gibbs_abc_rfp(
 
     batch_manager = MemorySafeBatchManager(device, config)
 
-    # Warm model
     with torch.no_grad():
         _ = model(prev_all[:1], time_all[:1])
 
@@ -337,11 +538,40 @@ def run_gibbs_abc_rfp(
                 longitude,
                 step_seed,
             )
+            
+            if len(current_batches) < sample_size:
+                logger.warning(f"Step {s}: Only found {len(current_batches)} compatible samples out of {sample_size} requested")
+            
+            prev_shapes = [b[0].shape for b in current_batches]
+            curr_shapes = [b[1].shape for b in current_batches]
+            time_shapes = [b[2].shape for b in current_batches]
+            
+            if len(set(prev_shapes)) > 1:
+                logger.error(f"Step {s}: Inconsistent previous field shapes: {set(prev_shapes)}")
+                raise RuntimeError(f"Inconsistent tensor shapes in previous fields at step {s}")
+            if len(set(curr_shapes)) > 1:
+                logger.error(f"Step {s}: Inconsistent current field shapes: {set(curr_shapes)}")
+                raise RuntimeError(f"Inconsistent tensor shapes in current fields at step {s}")
+            if len(set(time_shapes)) > 1:
+                logger.error(f"Step {s}: Inconsistent time shapes: {set(time_shapes)}")
+                raise RuntimeError(f"Inconsistent tensor shapes in time fields at step {s}")
+            
             prev_all = torch.cat([b[0] for b in current_batches], dim=0).to(device)
             curr_all = torch.cat([b[1] for b in current_batches], dim=0).to(device)
             time_all = torch.cat([b[2] for b in current_batches], dim=0).to(device)
+            
+            current_temporal_indices = None
+            if use_seasonal_rfp and temporal_metadata is not None:
+                current_temporal_indices = extract_temporal_indices_from_batches(
+                    current_batches, max_horizon_for_temporal, device
+                )
+        else:
+            current_temporal_indices = None
+            if use_seasonal_rfp and temporal_metadata is not None:
+                current_temporal_indices = extract_temporal_indices_from_batches(
+                    batches, max_horizon_for_temporal, device
+                )
 
-        # Adapt RW step size (where relevant)
         if s and (s % getattr(config, "adapt_every", 5) == 0) and (s < getattr(config, "adapt_stop", 30)):
             proposal_std *= getattr(config, "adapt_factor", 0.85)
             logger.debug(f"Proposal variance adapted: {proposal_std.mean():.3f}")
@@ -382,6 +612,9 @@ def run_gibbs_abc_rfp(
                 config=config,
                 logger=logger,
                 eps_energy=getattr(config, "eps_energy", 1e-6),
+                temporal_metadata=temporal_metadata,
+                base_temporal_indices=current_temporal_indices,
+                use_seasonal_rfp=use_seasonal_rfp,
             )
 
             joint_scores = np.asarray(joint_scores, dtype=np.float64)

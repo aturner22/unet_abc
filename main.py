@@ -5,6 +5,7 @@ import os
 import gc
 import logging
 import argparse
+from pathlib import Path
 from tqdm import tqdm
 
 from core.config import Config
@@ -73,15 +74,40 @@ def main():
     parser.add_argument(
         "--config", type=str, default="config.json", help="Path to configuration file"
     )
+    parser.add_argument(
+        "--resume-from", type=str, help="Path to existing result directory to resume from"
+    )
 
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    timestamp = os.environ.get(
-        "CONFIG_TIMESTAMP"
-    )  # Set by .pbs script during HPC implementation
-    config = Config(args.config, timestamp=timestamp)
+    if args.resume_from:
+        resume_path = Path(args.resume_from)
+        if not resume_path.exists():
+            raise FileNotFoundError(f"Resume directory not found: {resume_path}")
+        
+        checkpoint_file = resume_path / "gibbs_checkpoint_step.npz"
+        if not checkpoint_file.exists():
+            raise FileNotFoundError(f"No checkpoint found in: {resume_path}")
+        
+        dir_name = resume_path.name
+        if "_" in dir_name:
+            extracted_timestamp = dir_name.split("_", 1)[-1] 
+            timestamp = extracted_timestamp
+        else:
+            timestamp = os.environ.get("CONFIG_TIMESTAMP")
+            
+        config = Config(args.config, timestamp=timestamp)
+        
+        config.result_directory = resume_path
+        print(f"Resuming from existing directory: {resume_path}")
+        
+    else:
+        timestamp = os.environ.get(
+            "CONFIG_TIMESTAMP"
+        ) 
+        config = Config(args.config, timestamp=timestamp)
 
     logger = setup_logging(config.result_directory)
     log_computing_configuration()

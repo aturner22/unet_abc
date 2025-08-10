@@ -53,6 +53,13 @@ class Config:
 
         self.memory_management = raw.get("memory_management", {})
 
+        seasonal_rfp_params = raw.get("seasonal_rfp", {})
+        self.use_seasonal_rfp: bool = seasonal_rfp_params.get("enabled", False)
+        self.seasonal_day_window: int = seasonal_rfp_params.get("day_window", 30)
+        self.seasonal_hour_tolerance: int = seasonal_rfp_params.get("hour_tolerance", 0) 
+        self.seasonal_exclude_same_year: bool = seasonal_rfp_params.get("exclude_same_year", True)
+        self.seasonal_fallback_to_random: bool = seasonal_rfp_params.get("fallback_to_random", True)
+
         self.variable_names: list[str] = raw["variable_names"]
         self.num_variables: int = len(self.variable_names)
         self.num_static_fields: int = raw["num_static_fields"]

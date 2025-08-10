@@ -1,3 +1,8 @@
+# Code adapted from:
+# Elucidating the Design Space of Diffusion-Based Generative Models (EDM)
+# Tero Karras, Miika Aittala, Timo Aila, Samuli Laine
+# https://github.com/NVlabs/edm
+
 import numpy as np
 import torch
 from torch.nn.functional import silu
