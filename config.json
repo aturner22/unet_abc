@@ -1,6 +1,6 @@
 {
-  "name": "2nd_run_conditional_gibbs_abc",
-  "description": "Production run of conditional_gibbs_abc with energy score",
+  "name": "2nd_run_smc_gibbs_abc",
+  "description": "Production run of smc_gibbs_abc with energy score",
 
   "sample_size": 100,
   "ensemble_size": 50,
@@ -10,7 +10,7 @@
   "temporal_resampling": true,
   "score_function": "energy",
 
-  "inference_mode": "conditional_gibbs",
+  "inference_mode": "smc_gibbs",
   "abc_epsilon": 0.02, 
   "adaptive_epsilon": true,
   "min_epsilon": 0.01,

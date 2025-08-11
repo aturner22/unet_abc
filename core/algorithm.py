@@ -52,27 +52,6 @@ def generate_seasonal_joint_rfp(
     exclude_same_year: bool = True,
     fallback_to_random: bool = True,
 ) -> torch.Tensor:
-    """
-    Generate RFP using seasonal and diurnal constraints.
-    
-    Args:
-        reference_tensor: Full reference tensor [T, V, H, W]
-        alpha_matrix: Alpha parameters [P, V]  
-        batch_size: Number of samples in batch
-        ensemble_size: Size of ensemble
-        device: Computing device
-        generator: Random number generator
-        eps_energy: Energy regularization parameter
-        temporal_metadata: Temporal metadata for filtering
-        base_temporal_indices: Base time indices for each batch sample [batch_size]
-        day_window: ±days around base day of year (default: 30)
-        hour_tolerance: ±hours around base hour (default: 0 for exact)
-        exclude_same_year: Exclude candidates from same year as base
-        fallback_to_random: Fall back to random sampling if insufficient candidates
-        
-    Returns:
-        Perturbation tensor [P, batch_size, ensemble_size, V, H, W]
-    """
     P = alpha_matrix.shape[0]
     T, V = reference_tensor.shape[0], reference_tensor.shape[1]
     
