@@ -1,6 +1,6 @@
 {
-  "name": "2nd_run_smc_gibbs_abc",
-  "description": "Production run of smc_gibbs_abc with energy score",
+  "name": "2nd_run_smc_crps_gibbs_abc",
+  "description": "Production run of smc_gibbs_abc with crps",
 
   "sample_size": 100,
   "ensemble_size": 50,
@@ -8,7 +8,7 @@
   "n_proposals_per_variable": 16,
   "proposal_scale": 0.1,
   "temporal_resampling": true,
-  "score_function": "energy",
+  "score_function": "crps",
 
   "inference_mode": "smc_gibbs",
   "abc_epsilon": 0.02, 
