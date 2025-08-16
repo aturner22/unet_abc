@@ -1,6 +1,6 @@
 {
-  "name": "2nd_run_conditional_crps_gibbs_abc",
-  "description": "Production run of conditional_gibbs_abc with crps",
+  "name": "2nd_run_greedy_crps_gibbs_abc",
+  "description": "Production run of greedy_gibbs_abc with crps",
 
   "sample_size": 100,
   "ensemble_size": 50,
@@ -10,7 +10,7 @@
   "temporal_resampling": true,
   "score_function": "crps",
 
-  "inference_mode": "conditional_gibbs",
+  "inference_mode": "greedy",
   "abc_epsilon": 0.02, 
   "adaptive_epsilon": true,
   "min_epsilon": 0.01,
@@ -23,7 +23,7 @@
     "min_alpha": 1e-4,
     "adapt_every": 5,
     "adapt_factor": 0.85,
-    "adapt_stop": 65,
+    "adapt_stop": 75,
     "eps_energy": 1e-6,
     "checkpoint_file": "gibbs_checkpoint_step.npz"
   },
