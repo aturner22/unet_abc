@@ -1,0 +1,32 @@
+RESULT_DIR determined as: 'results/2nd_run_conditional_crps_gibbs_abc_2025-08-16T07:49:39Z'
+Running at Sat 16 Aug 07:49:40 UTC 2025 on cx3-20-4.cx3.hpc.ic.ac.uk
+CUDA_VISIBLE_DEVICES=GPU-0ff821be-4929-f39d-1463-c1a9ef03f077
+Sat Aug 16 08:49:40 2025       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 565.57.01              Driver Version: 565.57.01      CUDA Version: 12.7     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA L40S                    On  |   00000000:1A:00.0 Off |                    0 |
+| N/A   34C    P8             34W /  350W |       1MiB /  46068MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+                                                                                         
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI        PID   Type   Process name                              GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+
+====================================
+CPU Time used: 09:40:30
+CPU Percent: 98%
+Memory usage: 28702396kb
+Approx Power usage: 0.116
+Walltime usage: 10:01:01
+
+====================================
