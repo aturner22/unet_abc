@@ -1,4 +1,5 @@
 *.pdf
+*.png
 *.gif
 *.csv
 __pycache__
@@ -10,3 +11,4 @@ residual_std
 .DS_Store
 archive_
 report/*
+.vscode
